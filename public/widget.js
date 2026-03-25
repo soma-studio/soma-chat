@@ -507,6 +507,7 @@
 
   // --- Toggle ---
   function toggle() {
+    if (window.SOMA_CHAT_AUTO_OPEN) return; // No toggling in embedded mode
     isOpen = !isOpen;
     panel.classList.toggle("open", isOpen);
     btn.innerHTML = isOpen ? closeIcon : chatIcon;
@@ -523,6 +524,7 @@
 
   // --- Escape key to close ---
   document.addEventListener("keydown", function (e) {
+    if (window.SOMA_CHAT_AUTO_OPEN) return;
     if (e.key === "Escape" && isOpen) {
       toggle();
     }
@@ -788,4 +790,20 @@
       send();
     }
   });
+
+  // Embedded mode: fill container, hide floating button, auto-open
+  if (window.SOMA_CHAT_AUTO_OPEN) {
+    btn.style.display = "none";
+    panel.style.position = "static";
+    panel.style.width = "100%";
+    panel.style.height = "100%";
+    panel.style.borderRadius = "0";
+    panel.style.border = "none";
+    panel.style.boxShadow = "none";
+    panel.classList.add("open");
+    isOpen = true;
+    if (messages.children.length === 0) {
+      showWelcome();
+    }
+  }
 })();

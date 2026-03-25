@@ -50,7 +50,7 @@ export default function Home() {
     setState("running");
     setLines([]);
     setCompleteData(null);
-    addLine(`$ soma-chat pipeline --url ${url}`, "#8b8b9e");
+    addLine(`\u276F npx pipeline --url ${url}`, "#8b8b9e");
     addLine("");
 
     try {
@@ -62,14 +62,14 @@ export default function Home() {
 
       if (!res.ok) {
         const err = await res.json();
-        addLine(`Erreur: ${err.error || res.statusText}`, "#ef4444");
+        addLine(`Erreur: ${err.error || res.statusText}`, "#f85149");
         setState("idle");
         return;
       }
 
       const reader = res.body?.getReader();
       if (!reader) {
-        addLine("Erreur: pas de stream", "#ef4444");
+        addLine("Erreur: pas de stream", "#f85149");
         setState("idle");
         return;
       }
@@ -98,7 +98,7 @@ export default function Home() {
         }
       }
     } catch (err) {
-      addLine(`Erreur: ${err instanceof Error ? err.message : String(err)}`, "#ef4444");
+      addLine(`Erreur: ${err instanceof Error ? err.message : String(err)}`, "#f85149");
       setState("idle");
     }
   };
@@ -107,37 +107,37 @@ export default function Home() {
   const handleEvent = (event: any) => {
     switch (event.type) {
       case "start":
-        addLine(`Scraping ${event.url}...`, "#3b82f6");
+        addLine(`Scraping ${event.url}...`, "#a0a0b0");
         addLine("");
         break;
 
       case "page":
         addLine(
-          `  [${event.current}/${event.maxPages}] ${event.title?.substring(0, 50) || "Sans titre"} (${event.chars} chars)`,
-          "#f0f0f3"
+          `[${event.current}/${event.maxPages}] ${event.title?.substring(0, 50) || "Sans titre"} (${event.chars} chars)`,
+          "#a0a0b0"
         );
         break;
 
       case "limit":
         addLine("");
-        addLine(`  ${event.message}`, "#f59e0b");
+        addLine(`${event.message}`, "#e5a820");
         break;
 
       case "chunking":
         addLine("");
         addLine(
           `Chunking: ${event.documents} documents -> ${event.totalChunks} chunks`,
-          "#3b82f6"
+          "#a0a0b0"
         );
         break;
 
       case "indexing":
         if (event.percent <= 5) {
-          addLine(`Indexing: ${event.percent}% (${event.indexed}/${event.total})`, "#3b82f6");
+          addLine(`Indexing: ${event.percent}% (${event.indexed}/${event.total})`, "#a0a0b0");
         } else {
           updateLastLine(
             `Indexing: ${event.percent}% (${event.indexed}/${event.total})`,
-            "#3b82f6"
+            "#a0a0b0"
           );
         }
         break;
@@ -146,11 +146,11 @@ export default function Home() {
         addLine("");
         addLine(
           `Pipeline terminé en ${(event.elapsedMs / 1000).toFixed(1)}s`,
-          "#10b981"
+          "#3fb950"
         );
         addLine(
-          `  ${event.pagesIndexed} pages, ${event.chunksIndexed} chunks indexés`,
-          "#10b981"
+          `${event.pagesIndexed} pages, ${event.chunksIndexed} chunks indexés`,
+          "#3fb950"
         );
         setCompleteData({
           siteId: event.siteId,
@@ -162,7 +162,7 @@ export default function Home() {
         break;
 
       case "error":
-        addLine(`Erreur: ${event.message}`, "#ef4444");
+        addLine(`Erreur: ${event.message}`, "#f85149");
         setState("idle");
         break;
     }
@@ -219,23 +219,27 @@ export default function Home() {
         )}
       </section>
 
-      {/* Terminal */}
+      {/* Terminal + Preview + Snippet */}
       {(state === "running" || state === "complete") && (
         <section className="px-6 pb-12">
           <div className="mx-auto max-w-2xl">
             {/* Terminal window */}
-            <div className="rounded-xl border border-[#1f1f28] bg-[#0a0a0f] overflow-hidden">
-              {/* Title bar */}
-              <div className="flex items-center gap-2 px-4 py-3 border-b border-[#1f1f28]">
-                <div className="w-3 h-3 rounded-full bg-[#ef4444]" />
-                <div className="w-3 h-3 rounded-full bg-[#f59e0b]" />
-                <div className="w-3 h-3 rounded-full bg-[#10b981]" />
-                <span className="ml-2 text-xs text-[#55556a]">soma-chat pipeline</span>
+            <div className="rounded-lg border border-[#1f1f28] bg-[#0a0a0f] overflow-hidden">
+              {/* VSCode-style tab bar */}
+              <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#1f1f28] bg-[#0d0d14]">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] uppercase tracking-wider text-[#55556a]">Terminal</span>
+                </div>
+                <div className="flex items-center gap-1 text-[10px] text-[#55556a]">
+                  <span>soma-chat</span>
+                  <span className="text-[#2a2a34]">|</span>
+                  <span>node</span>
+                </div>
               </div>
               {/* Terminal content */}
               <div
                 ref={terminalRef}
-                className="p-4 font-mono text-sm leading-6 max-h-80 overflow-y-auto"
+                className="p-4 font-mono text-xs leading-5 max-h-72 overflow-y-auto"
               >
                 {lines.map((line, i) => (
                   <div key={i} style={{ color: line.color || "#f0f0f3" }}>
@@ -243,15 +247,50 @@ export default function Home() {
                   </div>
                 ))}
                 {state === "running" && (
-                  <span className="inline-block w-2 h-4 bg-blue-500 animate-pulse" />
+                  <span className="inline-block w-[2px] h-3.5 bg-[#a0a0b0] animate-pulse" />
                 )}
               </div>
             </div>
 
+            {/* Live Preview */}
+            {state === "complete" && completeData && (
+              <div className="mt-6">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-xs uppercase tracking-wider text-[#55556a]">
+                    Aperçu
+                  </p>
+                  <p className="text-[10px] text-[#3f3f4a]">
+                    Les données de votre site sont utilisées en temps réel
+                  </p>
+                </div>
+                <div
+                  className="rounded-lg border border-[#1f1f28] bg-[#0a0a0f] overflow-hidden"
+                  style={{ height: "480px" }}
+                >
+                  <iframe
+                    className="w-full h-full border-0"
+                    srcDoc={`<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { margin: 0; background: #0a0a0f; height: 100vh; overflow: hidden; }
+</style>
+</head>
+<body>
+<script>window.SOMA_CHAT_AUTO_OPEN = true;<\/script>
+<script src="${siteUrl}/widget.js" data-site-id="${completeData.siteId}"><\/script>
+</body>
+</html>`}
+                    title="Aperçu du chatbot"
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Success card */}
             {state === "complete" && completeData && (
               <div className="mt-6 rounded-xl border border-[#1f1f28] bg-[#111118] p-6">
-                <h3 className="text-lg font-semibold text-[#10b981] mb-3">
+                <h3 className="text-lg font-semibold text-[#3fb950] mb-3">
                   Votre chatbot est prêt !
                 </h3>
                 <p className="text-sm text-[#8b8b9e] mb-4">
