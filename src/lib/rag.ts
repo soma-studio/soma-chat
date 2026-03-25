@@ -27,8 +27,8 @@ ${c.payload.content}
 RÈGLES :
 - Réponds UNIQUEMENT à partir des extraits documentaires fournis ci-dessous.
 - Si l'information n'est pas dans les extraits, dis : "${config.fallbackMessage}"
-- Cite tes sources quand c'est pertinent (titre de la page + lien).
-- Ne cite QUE les sources dont tu utilises réellement le contenu dans ta réponse. N'ajoute pas de sources "pour compléter".
+- Ne cite une source QUE si tu utilises directement son contenu dans ta réponse. Zéro source hors-sujet.
+- N'ajoute PAS de section "Sources" à la fin de ta réponse. Les sources sont affichées automatiquement par l'interface.
 - Sois concis, professionnel et bienveillant.
 - Réponds en ${lang}.
 
@@ -56,22 +56,35 @@ export async function processRAGQuery(
   const systemPrompt = buildSystemPrompt(siteConfig, results);
   const answer = await chatCompletion(systemPrompt, message);
 
-  // 4. Deduplicate sources by URL
-  const seenUrls = new Set<string>();
-  const sources = results
-    .filter((r) => {
-      if (seenUrls.has(r.payload.url)) return false;
-      seenUrls.add(r.payload.url);
-      return true;
-    })
-    .map((r) => ({
-      title: r.payload.title,
-      url: r.payload.url,
-      section: r.payload.section,
-      score: r.score,
-    }))
-    .filter((s) => s.score >= 0.55)
-    .slice(0, 3);
+  // 4. Deduplicate sources by URL, keeping highest score per URL
+  const urlScores = new Map<
+    string,
+    { title: string; url: string; section: string; score: number }
+  >();
+  for (const r of results) {
+    const existing = urlScores.get(r.payload.url);
+    if (!existing || r.score > existing.score) {
+      urlScores.set(r.payload.url, {
+        title: r.payload.title,
+        url: r.payload.url,
+        section: r.payload.section,
+        score: r.score,
+      });
+    }
+  }
+
+  // 5. Filter sources: relative threshold (must be within 80% of top score) + absolute floor
+  const allSources = Array.from(urlScores.values()).sort(
+    (a, b) => b.score - a.score
+  );
+  const topScore = allSources[0]?.score ?? 0;
+  const relativeThreshold = topScore * 0.8;
+  const absoluteFloor = 0.55;
+  const threshold = Math.max(relativeThreshold, absoluteFloor);
+
+  const sources = allSources
+    .filter((s) => s.score >= threshold)
+    .slice(0, 2);
 
   return {
     answer,
