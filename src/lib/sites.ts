@@ -4,14 +4,14 @@ const REGISTRY_COLLECTION = "soma_chat_registry";
 
 async function ensureCollection(): Promise<void> {
   const url = `${process.env.QDRANT_URL}/collections/${REGISTRY_COLLECTION}`;
-  const res = await fetch(url, {
+  const check = await fetch(url, {
     headers: { "api-key": process.env.QDRANT_API_KEY! },
   });
 
-  if (res.ok) return; // Collection exists
+  if (check.ok) return;
 
-  // Create collection with a dummy vector (we only use payload)
-  await fetch(url, {
+  console.log(`Creating registry collection: ${REGISTRY_COLLECTION}`);
+  const res = await fetch(url, {
     method: "PUT",
     headers: {
       "api-key": process.env.QDRANT_API_KEY!,
@@ -21,6 +21,14 @@ async function ensureCollection(): Promise<void> {
       vectors: { size: 1, distance: "Cosine" },
     }),
   });
+
+  if (!res.ok) {
+    const errText = await res.text().catch(() => "unknown");
+    console.error(`Failed to create registry collection [${res.status}]: ${errText}`);
+    throw new Error(`Failed to create registry: ${errText}`);
+  }
+
+  console.log("Registry collection created");
 }
 
 function siteIdToPointId(siteId: string): number {
@@ -68,32 +76,34 @@ export async function getSite(siteId: string): Promise<SiteRecord | null> {
 }
 
 export async function upsertSite(record: SiteRecord): Promise<void> {
-  try {
-    await ensureCollection();
+  await ensureCollection();
 
-    const pointId = siteIdToPointId(record.siteId);
+  const pointId = siteIdToPointId(record.siteId);
 
-    await fetch(
-      `${process.env.QDRANT_URL}/collections/${REGISTRY_COLLECTION}/points`,
-      {
-        method: "PUT",
-        headers: {
-          "api-key": process.env.QDRANT_API_KEY!,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          points: [
-            {
-              id: pointId,
-              vector: [0], // Dummy vector — we only use payload
-              payload: record,
-            },
-          ],
-        }),
-      }
-    );
-  } catch (err) {
-    console.error("Failed to upsert site:", err);
+  const res = await fetch(
+    `${process.env.QDRANT_URL}/collections/${REGISTRY_COLLECTION}/points`,
+    {
+      method: "PUT",
+      headers: {
+        "api-key": process.env.QDRANT_API_KEY!,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        points: [
+          {
+            id: pointId,
+            vector: [0], // Dummy vector — we only use payload
+            payload: record,
+          },
+        ],
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    const errText = await res.text().catch(() => "unknown error");
+    console.error(`upsertSite failed [${res.status}]: ${errText}`);
+    throw new Error(`Failed to register site: ${errText}`);
   }
 }
 

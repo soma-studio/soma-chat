@@ -164,7 +164,12 @@ export async function runPipeline(options: PipelineOptions): Promise<void> {
       lastScrapedAt: new Date().toISOString(),
     };
 
-    await upsertSite(siteRecord);
+    try {
+      await upsertSite(siteRecord);
+    } catch (err) {
+      console.error("Site registration failed:", err);
+      // Non-fatal: the Qdrant collection with chunks exists, just the registry entry is missing
+    }
 
     onEvent({
       type: "complete",
