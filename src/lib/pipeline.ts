@@ -25,6 +25,15 @@ export interface PipelineOptions {
   onEvent: (event: PipelineEvent) => void;
 }
 
+// --- Dynamic data directory ---
+export function getDataDir(): string {
+  // Vercel serverless: filesystem is read-only except /tmp
+  if (process.env.VERCEL) {
+    return "/tmp/soma-chat-data";
+  }
+  return path.join(process.cwd(), "data");
+}
+
 // --- Helpers ---
 function extractSiteName(url: string): string {
   try {
@@ -155,7 +164,7 @@ export async function runPipeline(options: PipelineOptions): Promise<void> {
       lastScrapedAt: new Date().toISOString(),
     };
 
-    upsertSite(siteRecord);
+    await upsertSite(siteRecord);
 
     onEvent({
       type: "complete",
@@ -164,6 +173,14 @@ export async function runPipeline(options: PipelineOptions): Promise<void> {
       chunksIndexed: indexResult.chunksIndexed,
       elapsedMs: Date.now() - startTime,
     });
+
+    // Clean up temp files (important on Vercel where /tmp is shared)
+    try {
+      const siteDir = path.join(dataDir, siteId);
+      fs.rmSync(siteDir, { recursive: true, force: true });
+    } catch {
+      // Non-critical — /tmp is cleaned up periodically anyway
+    }
   } catch (err) {
     onEvent({
       type: "error",

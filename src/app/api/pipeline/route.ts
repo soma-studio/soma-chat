@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
 import { v4 as uuidv4 } from "uuid";
-import * as path from "path";
-import { runPipeline } from "@/lib/pipeline";
+import { runPipeline, getDataDir } from "@/lib/pipeline";
 import { FREE_TIER } from "@/lib/constants";
 
 export const maxDuration = 60;
@@ -46,7 +45,7 @@ export async function POST(req: NextRequest) {
   }
 
   const siteId = uuidv4().slice(0, 8);
-  const dataDir = path.join(process.cwd(), "data");
+  const dataDir = getDataDir();
 
   const stream = new ReadableStream({
     start(controller) {

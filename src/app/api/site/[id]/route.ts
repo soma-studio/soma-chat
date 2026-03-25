@@ -17,7 +17,7 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  const site = getSite(id);
+  const site = await getSite(id);
   if (!site) {
     return NextResponse.json(
       { error: `Site "${id}" not found` },

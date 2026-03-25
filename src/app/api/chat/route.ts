@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Load site config
-    const site = getSite(siteId);
+    const site = await getSite(siteId);
     if (!site) {
       return NextResponse.json(
         { error: `Site "${siteId}" not found` },
