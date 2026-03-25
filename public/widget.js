@@ -67,13 +67,21 @@
       background: #0a0a0f;
       border: 1px solid #1f1f28;
       border-radius: 16px;
-      display: none;
+      display: flex;
       flex-direction: column;
       overflow: hidden;
       box-shadow: 0 8px 48px rgba(0,0,0,0.6);
       z-index: 2147483647;
+      opacity: 0;
+      transform: translateY(16px) scale(0.96);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
     }
-    .soma-panel.open { display: flex; }
+    .soma-panel.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
 
     @media (max-width: 440px) {
       .soma-panel {
@@ -93,10 +101,29 @@
       background: #111118;
       border-bottom: 1px solid #1f1f28;
     }
+    .soma-header-left {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .soma-header-right {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
     .soma-header-title {
       font-weight: 600;
       font-size: 15px;
       color: #f0f0f3;
+    }
+    .soma-online-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      display: inline-block;
+      margin-left: 6px;
+      vertical-align: middle;
     }
     .soma-close {
       background: none;
@@ -110,6 +137,17 @@
     }
     .soma-close:hover { color: #f0f0f3; background: #1a1a24; }
     .soma-close svg { width: 18px; height: 18px; }
+    .soma-reset {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #55556a;
+      padding: 4px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+    }
+    .soma-reset:hover { color: #8b8b9e; background: #1a1a24; }
 
     .soma-messages {
       flex: 1;
@@ -153,7 +191,30 @@
       margin: 6px 0;
       padding-left: 18px;
     }
+    .soma-msg-assistant ol {
+      padding-left: 22px;
+      list-style: decimal;
+    }
     .soma-msg-assistant li { margin-bottom: 2px; }
+    .soma-heading {
+      font-weight: 600;
+      font-size: 14px;
+      color: #f0f0f3;
+      margin: 8px 0 4px;
+    }
+    .soma-hr {
+      border: none;
+      border-top: 1px solid #2a2a34;
+      margin: 8px 0;
+    }
+    .soma-code {
+      background: #0d0d14;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      color: #e8e8ed;
+    }
 
     .soma-sources {
       margin-top: 8px;
@@ -223,6 +284,7 @@
     }
     .soma-input:focus { border-color: ${accentColor}; }
     .soma-input::placeholder { color: #55556a; }
+    .soma-input:disabled { opacity: 0.5; }
 
     .soma-send {
       background: ${accentColor};
@@ -249,14 +311,63 @@
       font-size: 11px;
       color: #55556a;
       text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
     .soma-footer a:hover { color: #8b8b9e; }
 
     .soma-welcome {
       text-align: center;
+      padding: 32px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .soma-welcome-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: ${accentColor}26;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .soma-welcome-icon svg { width: 22px; height: 22px; fill: ${accentColor}; }
+    .soma-welcome-title {
+      font-weight: 600;
+      font-size: 16px;
+      color: #f0f0f3;
+    }
+    .soma-welcome-text {
       color: #8b8b9e;
       font-size: 13px;
-      padding: 24px 16px;
+      max-width: 280px;
+    }
+
+    .soma-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      padding: 8px 16px 16px;
+    }
+    .soma-suggestion {
+      background: #111118;
+      border: 1px solid #2a2a34;
+      border-radius: 20px;
+      padding: 6px 12px;
+      color: #8b8b9e;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .soma-suggestion:hover {
+      background: #1a1a24;
+      border-color: ${accentColor};
+      color: #f0f0f3;
     }
   `;
 
@@ -293,15 +404,37 @@
   // Header
   var header = document.createElement("div");
   header.className = "soma-header";
+
+  var headerLeft = document.createElement("div");
+  headerLeft.className = "soma-header-left";
   var headerTitle = document.createElement("span");
   headerTitle.className = "soma-header-title";
   headerTitle.textContent = "Assistant";
+  var onlineDot = document.createElement("span");
+  onlineDot.className = "soma-online-dot";
+  headerLeft.appendChild(headerTitle);
+  headerLeft.appendChild(onlineDot);
+
+  var headerRight = document.createElement("div");
+  headerRight.className = "soma-header-right";
+
+  // Reset button
+  var resetBtn = document.createElement("button");
+  resetBtn.className = "soma-reset";
+  resetBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>';
+  resetBtn.setAttribute("aria-label", "New conversation");
+  resetBtn.style.display = "none";
+
   var closeBtn = document.createElement("button");
   closeBtn.className = "soma-close";
   closeBtn.innerHTML = closeIcon;
   closeBtn.setAttribute("aria-label", "Close chat");
-  header.appendChild(headerTitle);
-  header.appendChild(closeBtn);
+
+  headerRight.appendChild(resetBtn);
+  headerRight.appendChild(closeBtn);
+
+  header.appendChild(headerLeft);
+  header.appendChild(headerRight);
   panel.appendChild(header);
 
   // Messages
@@ -332,7 +465,7 @@
   footerLink.href = "https://somastudio.xyz";
   footerLink.target = "_blank";
   footerLink.rel = "noopener noreferrer";
-  footerLink.textContent = "Powered by SOMA Studio";
+  footerLink.innerHTML = '<svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/></svg> Powered by SOMA Studio \u2197';
   footer.appendChild(footerLink);
   panel.appendChild(footer);
 
@@ -342,9 +475,11 @@
   // --- State ---
   var isOpen = false;
   var isLoading = false;
+  var suggestedQuestions = [];
+  var siteNameText = "Assistant";
+  var welcomeText = "Posez-moi une question sur notre site !";
 
   // --- Fetch site config ---
-  var welcomeText = "Posez-moi une question sur notre site !";
   fetch(apiBase + "/api/site/" + siteId)
     .then(function (res) {
       if (!res.ok) return;
@@ -352,11 +487,21 @@
     })
     .then(function (data) {
       if (!data) return;
-      if (data.siteName) headerTitle.textContent = data.siteName;
+      if (data.siteName) {
+        siteNameText = data.siteName;
+        headerTitle.textContent = siteNameText;
+      }
       if (data.welcomeMessage) welcomeText = data.welcomeMessage;
-      // Update welcome message if already displayed
-      var w = messages.querySelector(".soma-welcome");
-      if (w) w.textContent = welcomeText;
+      if (data.suggestedQuestions) suggestedQuestions = data.suggestedQuestions;
+      // Update welcome if already displayed
+      var wTitle = messages.querySelector(".soma-welcome-title");
+      if (wTitle) wTitle.textContent = siteNameText;
+      var wText = messages.querySelector(".soma-welcome-text");
+      if (wText) wText.textContent = welcomeText;
+      // Render suggestions if welcome is visible and suggestions arrived
+      if (suggestedQuestions.length > 0 && messages.querySelector(".soma-welcome") && !messages.querySelector(".soma-suggestions")) {
+        renderSuggestions();
+      }
     })
     .catch(function () {});
 
@@ -364,6 +509,7 @@
   function toggle() {
     isOpen = !isOpen;
     panel.classList.toggle("open", isOpen);
+    btn.innerHTML = isOpen ? closeIcon : chatIcon;
     if (isOpen) {
       input.focus();
       if (messages.children.length === 0) {
@@ -375,39 +521,169 @@
   btn.addEventListener("click", toggle);
   closeBtn.addEventListener("click", toggle);
 
+  // --- Escape key to close ---
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && isOpen) {
+      toggle();
+    }
+  });
+
   // --- Welcome ---
   function showWelcome() {
     var w = document.createElement("div");
     w.className = "soma-welcome";
-    w.textContent = welcomeText;
+
+    var iconWrap = document.createElement("div");
+    iconWrap.className = "soma-welcome-icon";
+    iconWrap.innerHTML = '<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/></svg>';
+
+    var title = document.createElement("div");
+    title.className = "soma-welcome-title";
+    title.textContent = siteNameText;
+
+    var text = document.createElement("div");
+    text.className = "soma-welcome-text";
+    text.textContent = welcomeText;
+
+    w.appendChild(iconWrap);
+    w.appendChild(title);
+    w.appendChild(text);
     messages.appendChild(w);
+
+    if (suggestedQuestions.length > 0) {
+      renderSuggestions();
+    }
   }
 
+  // --- Suggestions ---
+  function renderSuggestions() {
+    var container = document.createElement("div");
+    container.className = "soma-suggestions";
+    suggestedQuestions.forEach(function (q) {
+      var pill = document.createElement("button");
+      pill.className = "soma-suggestion";
+      pill.textContent = q;
+      pill.addEventListener("click", function () {
+        sendQuestion(q);
+      });
+      container.appendChild(pill);
+    });
+    messages.appendChild(container);
+  }
+
+  function sendQuestion(text) {
+    // Remove welcome + suggestions
+    var welcome = messages.querySelector(".soma-welcome");
+    if (welcome) welcome.remove();
+    var sugg = messages.querySelector(".soma-suggestions");
+    if (sugg) sugg.remove();
+
+    input.value = text;
+    send();
+  }
+
+  // --- Reset conversation ---
+  resetBtn.addEventListener("click", function () {
+    messages.innerHTML = "";
+    resetBtn.style.display = "none";
+    showWelcome();
+    input.focus();
+  });
+
   // --- Markdown rendering ---
-  function renderMarkdown(text) {
-    return text
-      // Bold: **text**
+  function applyInlineFormatting(line) {
+    return line
+      // Inline code: `code`
+      .replace(/`([^`]+)`/g, '<code class="soma-code">$1</code>')
+      // Bold (double underscore): __text__
+      .replace(/__(.+?)__/g, "<strong>$1</strong>")
+      // Bold (asterisks): **text**
       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-      // Italic: *text*
-      .replace(/\*(.+?)\*/g, "<em>$1</em>")
+      // Italic: *text* (single asterisk, not preceded by another *)
+      .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, "<em>$1</em>")
       // Links: [text](url)
       .replace(
         /\[([^\]]+)\]\(([^)]+)\)/g,
         '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
-      )
-      // Unordered list items: - item
-      .replace(/^- (.+)$/gm, "<li>$1</li>")
-      // Wrap consecutive <li> in <ul>
-      .replace(/((?:<li>.+<\/li>\n?)+)/g, "<ul>$1</ul>")
-      // Line breaks
-      .replace(/\n/g, "<br>");
+      );
+  }
+
+  function renderMarkdown(text) {
+    var lines = text.split("\n");
+    var result = [];
+    var listBuffer = [];
+    var listType = null; // 'ul' or 'ol'
+
+    function flushList() {
+      if (listBuffer.length === 0) return;
+      result.push("<" + listType + ">" + listBuffer.join("") + "</" + listType + ">");
+      listBuffer = [];
+      listType = null;
+    }
+
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+
+      // Headings: #, ##, ###
+      var headingMatch = line.match(/^(#{1,3})\s+(.+)$/);
+      if (headingMatch) {
+        flushList();
+        result.push('<div class="soma-heading">' + applyInlineFormatting(headingMatch[2]) + "</div>");
+        continue;
+      }
+
+      // Horizontal rule: ---
+      if (/^-{3,}$/.test(line.trim())) {
+        flushList();
+        result.push('<hr class="soma-hr">');
+        continue;
+      }
+
+      // Ordered list: 1. item
+      var olMatch = line.match(/^\d+\.\s+(.+)$/);
+      if (olMatch) {
+        if (listType && listType !== "ol") flushList();
+        listType = "ol";
+        listBuffer.push("<li>" + applyInlineFormatting(olMatch[1]) + "</li>");
+        continue;
+      }
+
+      // Unordered list: - item or * item
+      var ulMatch = line.match(/^[-*]\s+(.+)$/);
+      if (ulMatch) {
+        if (listType && listType !== "ul") flushList();
+        listType = "ul";
+        listBuffer.push("<li>" + applyInlineFormatting(ulMatch[1]) + "</li>");
+        continue;
+      }
+
+      // Not a list item — flush any pending list
+      flushList();
+
+      // Empty line
+      if (line.trim() === "") {
+        result.push("<br>");
+        continue;
+      }
+
+      // Regular text
+      result.push(applyInlineFormatting(line));
+    }
+
+    flushList();
+    return result.join("\n");
   }
 
   // --- Add message ---
   function addMessage(role, content, sources) {
-    // Remove welcome message if present
+    // Remove welcome + suggestions if present
     var welcome = messages.querySelector(".soma-welcome");
     if (welcome) welcome.remove();
+    var sugg = messages.querySelector(".soma-suggestions");
+    if (sugg) sugg.remove();
+
+    // Show reset button
+    resetBtn.style.display = "flex";
 
     var msg = document.createElement("div");
     msg.className = "soma-msg soma-msg-" + role;
@@ -470,6 +746,7 @@
     addMessage("user", text);
     isLoading = true;
     sendBtn.disabled = true;
+    input.disabled = true;
     showTyping();
 
     try {
@@ -487,7 +764,7 @@
         });
         addMessage(
           "assistant",
-          errData.error || "Une erreur est survenue. Veuillez réessayer."
+          errData.error || "Une erreur est survenue. Veuillez r\u00e9essayer."
         );
       } else {
         var data = await res.json();
@@ -495,11 +772,12 @@
       }
     } catch (err) {
       hideTyping();
-      addMessage("assistant", "Impossible de contacter le serveur. Veuillez réessayer.");
+      addMessage("assistant", "Impossible de contacter le serveur. Veuillez r\u00e9essayer.");
     }
 
     isLoading = false;
     sendBtn.disabled = false;
+    input.disabled = false;
     input.focus();
   }
 

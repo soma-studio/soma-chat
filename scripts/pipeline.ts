@@ -53,6 +53,42 @@ function runStep(name: string, command: string): void {
   console.log(`\n-> ${name} completed in ${elapsed}s`);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function generateSuggestedQuestions(scrapedDir: string, fs: any, path: any): string[] {
+  const questions: string[] = [];
+  const files = fs.readdirSync(scrapedDir).filter((f: string) => f.endsWith(".json"));
+
+  const pageTitles: string[] = [];
+
+  for (const file of files) {
+    try {
+      const page = JSON.parse(fs.readFileSync(path.join(scrapedDir, file), "utf-8"));
+      pageTitles.push(page.title || "");
+    } catch {
+      // skip
+    }
+  }
+
+  // Generate based on what pages exist
+  questions.push("Quels services proposez-vous ?");
+
+  if (pageTitles.some((t: string) => /tarif|prix|pricing/i.test(t))) {
+    questions.push("Quels sont vos tarifs ?");
+  }
+  if (pageTitles.some((t: string) => /contact/i.test(t))) {
+    questions.push("Comment vous contacter ?");
+  }
+  if (pageTitles.some((t: string) => /blog|article/i.test(t))) {
+    questions.push("Quels sont vos derniers articles ?");
+  }
+  if (pageTitles.some((t: string) => /propos|about|équipe|team/i.test(t))) {
+    questions.push("Qui \u00eates-vous ?");
+  }
+
+  // Cap at 4 questions
+  return questions.slice(0, 4);
+}
+
 async function main() {
   const { url, siteId, maxPages } = parseArgs();
   const totalStart = Date.now();
@@ -109,6 +145,10 @@ async function main() {
       }
     }
 
+    // Generate suggested questions from scraped pages
+    const suggestedQuestions = generateSuggestedQuestions(scrapedDir, fs, path);
+    console.log(`\nSuggested questions: ${suggestedQuestions.join(", ")}`);
+
     // Read existing sites
     let sites: Record<string, unknown>[] = [];
     if (fs.existsSync(sitesFile)) {
@@ -130,6 +170,7 @@ async function main() {
       accentColor: "#3b82f6",
       pagesIndexed: scrapedFiles.length,
       chunksIndexed: chunks.length,
+      suggestedQuestions,
       createdAt:
         existingIndex >= 0
           ? (sites[existingIndex] as Record<string, unknown>).createdAt
@@ -144,7 +185,7 @@ async function main() {
     }
 
     fs.writeFileSync(sitesFile, JSON.stringify(sites, null, 2), "utf-8");
-    console.log(`\nSite registered in ${sitesFile}`);
+    console.log(`Site registered in ${sitesFile}`);
   } catch (err) {
     console.error(`Warning: Could not register site: ${err}`);
   }

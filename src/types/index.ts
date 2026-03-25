@@ -36,6 +36,7 @@ export interface SiteRecord {
   accentColor: string;
   pagesIndexed: number;
   chunksIndexed: number;
+  suggestedQuestions: string[];
   createdAt: string;
   lastScrapedAt: string;
 }

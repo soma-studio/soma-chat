@@ -30,6 +30,7 @@ export async function GET(
       siteName: site.siteName,
       welcomeMessage: site.welcomeMessage,
       accentColor: site.accentColor,
+      suggestedQuestions: site.suggestedQuestions || [],
     },
     { headers: corsHeaders }
   );
