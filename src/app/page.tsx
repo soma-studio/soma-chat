@@ -179,6 +179,14 @@ export default function Home() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleReset = () => {
+    setState("idle");
+    setLines([]);
+    setCompleteData(null);
+    setUrl("");
+    setCopied(false);
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero */}
@@ -287,37 +295,93 @@ export default function Home() {
               </div>
             )}
 
-            {/* Success card */}
+            {/* Stripe-style snippet card */}
             {state === "complete" && completeData && (
-              <div className="mt-6 rounded-xl border border-[#1f1f28] bg-[#111118] p-6">
-                <h3 className="text-lg font-semibold text-[#3fb950] mb-3">
-                  Votre chatbot est prêt !
-                </h3>
-                <p className="text-sm text-[#8b8b9e] mb-4">
-                  Collez ce snippet dans votre HTML, juste avant{" "}
-                  <code className="text-[#f0f0f3] bg-[#1a1a24] px-1.5 py-0.5 rounded text-xs">
-                    &lt;/body&gt;
-                  </code>
-                </p>
+              <div className="mt-6 rounded-xl border border-[#1f1f28] bg-[#111118] overflow-hidden">
+                {/* Header bar */}
+                <div className="flex items-center justify-between px-5 py-3 bg-[#0d0d14] border-b border-[#1f1f28]">
+                  <div className="flex items-center gap-2.5">
+                    <span className="inline-block w-2 h-2 rounded-full bg-[#3fb950]" />
+                    <span className="text-sm font-medium text-[#f0f0f3]">Votre chatbot est prêt</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-full bg-[#1a1a24] px-2.5 py-0.5 text-[10px] text-[#8b8b9e]">
+                      {completeData.pagesIndexed} pages
+                    </span>
+                    <span className="rounded-full bg-[#1a1a24] px-2.5 py-0.5 text-[10px] text-[#8b8b9e]">
+                      {completeData.chunksIndexed} chunks
+                    </span>
+                    <span className="rounded-full bg-[#1a1a24] px-2.5 py-0.5 text-[10px] text-[#8b8b9e]">
+                      {(completeData.elapsedMs / 1000).toFixed(1)}s
+                    </span>
+                  </div>
+                </div>
 
-                {/* Snippet */}
+                {/* Instruction */}
+                <div className="px-5 py-4 border-b border-[#1f1f28]">
+                  <p className="text-sm text-[#8b8b9e]">
+                    Collez ce snippet dans votre HTML, juste avant{" "}
+                    <code className="text-[#f0f0f3] bg-[#1a1a24] px-1.5 py-0.5 rounded text-xs">
+                      &lt;/body&gt;
+                    </code>
+                  </p>
+                </div>
+
+                {/* Code block */}
                 <div className="relative">
-                  <pre className="rounded-lg bg-[#0a0a0f] border border-[#1f1f28] p-4 text-sm text-[#f0f0f3] font-mono overflow-x-auto">
-                    {snippet}
-                  </pre>
+                  {/* Tab bar */}
+                  <div className="flex items-center px-4 py-1.5 bg-[#0d0d14] border-b border-[#1f1f28]">
+                    <span className="text-[10px] uppercase tracking-wider text-[#8b8b9e] border-b border-blue-500 pb-1.5">
+                      HTML
+                    </span>
+                  </div>
+
+                  {/* Code with line numbers */}
+                  <div className="flex overflow-x-auto bg-[#0a0a0f] p-4">
+                    {/* Line numbers */}
+                    <div className="flex flex-col w-8 shrink-0 select-none text-right pr-4 font-mono text-xs leading-5 text-[#3f3f4a]">
+                      <span>1</span>
+                      <span>2</span>
+                      <span>3</span>
+                    </div>
+
+                    {/* Syntax-highlighted code */}
+                    <pre className="font-mono text-xs leading-5 whitespace-pre">
+                      <span style={{ color: "#f85149" }}>&lt;script</span>
+                      {"\n"}
+                      <span>{"  "}</span>
+                      <span style={{ color: "#d2a8ff" }}>src</span>
+                      <span style={{ color: "#f0f0f3" }}>=</span>
+                      <span style={{ color: "#a5d6ff" }}>&quot;{siteUrl}/widget.js&quot;</span>
+                      {" "}
+                      <span style={{ color: "#d2a8ff" }}>data-site-id</span>
+                      <span style={{ color: "#f0f0f3" }}>=</span>
+                      <span style={{ color: "#a5d6ff" }}>&quot;{completeData.siteId}&quot;</span>
+                      {"\n"}
+                      <span style={{ color: "#f85149" }}>&gt;&lt;/script&gt;</span>
+                    </pre>
+                  </div>
+
+                  {/* Copy button */}
                   <button
                     onClick={handleCopy}
-                    className="absolute top-2 right-2 rounded-md bg-[#1a1a24] border border-[#2a2a34] px-3 py-1.5 text-xs text-[#8b8b9e] hover:text-[#f0f0f3] transition-colors"
+                    className="absolute top-10 right-3 rounded-md bg-[#1a1a24] border border-[#2a2a34] px-3 py-1.5 text-xs text-[#8b8b9e] hover:text-[#f0f0f3] transition-colors"
                   >
                     {copied ? "Copié !" : "Copier"}
                   </button>
                 </div>
 
-                {/* Stats */}
-                <div className="mt-4 flex gap-6 text-xs text-[#55556a]">
-                  <span>{completeData.pagesIndexed} pages</span>
-                  <span>{completeData.chunksIndexed} chunks</span>
-                  <span>{(completeData.elapsedMs / 1000).toFixed(1)}s</span>
+                {/* Bottom bar */}
+                <div className="flex items-center justify-between px-5 py-3 border-t border-[#1f1f28] bg-[#0d0d14]">
+                  <button
+                    onClick={handleReset}
+                    className="text-xs text-[#8b8b9e] hover:text-[#f0f0f3] transition-colors"
+                  >
+                    Recommencer
+                  </button>
+                  <span className="text-[10px] text-[#3f3f4a]">
+                    Gratuit &middot; 10 pages &middot; Powered by SOMA Studio
+                  </span>
                 </div>
               </div>
             )}

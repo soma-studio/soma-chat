@@ -2,13 +2,56 @@ import type { SiteRecord } from "@/types";
 
 const REGISTRY_COLLECTION = "soma_chat_registry";
 
+async function ensurePayloadIndex(): Promise<void> {
+  const headers = {
+    "api-key": process.env.QDRANT_API_KEY!,
+    "Content-Type": "application/json",
+  };
+
+  // Check if siteId index already exists
+  const infoRes = await fetch(
+    `${process.env.QDRANT_URL}/collections/${REGISTRY_COLLECTION}`,
+    { headers: { "api-key": process.env.QDRANT_API_KEY! } }
+  );
+
+  if (infoRes.ok) {
+    const info = await infoRes.json();
+    const schema = info.result?.payload_schema;
+    if (schema && schema.siteId) return; // Index already exists
+  }
+
+  console.log("Creating payload index on siteId...");
+  const res = await fetch(
+    `${process.env.QDRANT_URL}/collections/${REGISTRY_COLLECTION}/index`,
+    {
+      method: "PUT",
+      headers,
+      body: JSON.stringify({
+        field_name: "siteId",
+        field_schema: "keyword",
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    const errText = await res.text().catch(() => "unknown");
+    console.error(`Failed to create siteId index [${res.status}]: ${errText}`);
+    // Non-fatal: filtering may still work without strict mode
+  } else {
+    console.log("Payload index on siteId created");
+  }
+}
+
 async function ensureCollection(): Promise<void> {
   const url = `${process.env.QDRANT_URL}/collections/${REGISTRY_COLLECTION}`;
   const check = await fetch(url, {
     headers: { "api-key": process.env.QDRANT_API_KEY! },
   });
 
-  if (check.ok) return;
+  if (check.ok) {
+    await ensurePayloadIndex();
+    return;
+  }
 
   console.log(`Creating registry collection: ${REGISTRY_COLLECTION}`);
   const res = await fetch(url, {
@@ -29,6 +72,7 @@ async function ensureCollection(): Promise<void> {
   }
 
   console.log("Registry collection created");
+  await ensurePayloadIndex();
 }
 
 function siteIdToPointId(siteId: string): number {
