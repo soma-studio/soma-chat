@@ -16,6 +16,32 @@ interface CompleteData {
   elapsedMs: number;
 }
 
+const features = [
+  "Scraping automatique de votre site (pages publiques)",
+  "Découpage intelligent du contenu en chunks",
+  "Indexation vectorielle via Mistral AI embeddings",
+  "Chatbot RAG avec réponses sourcées",
+  "Widget embeddable en une ligne de code (Shadow DOM)",
+  "Questions suggérées auto-générées",
+  "Aucune clé API requise — tout est hébergé",
+  "Open source (MIT) — self-host possible",
+];
+
+const steps = [
+  {
+    title: "Entrez votre URL",
+    desc: "On prend l\u2019URL de votre site et on crawle toutes les pages publiques.",
+  },
+  {
+    title: "On indexe votre contenu",
+    desc: "Le contenu est découpé en chunks, transformé en vecteurs et stocké dans Qdrant.",
+  },
+  {
+    title: "Collez le script",
+    desc: "Un simple <script> à ajouter dans votre HTML. Le chatbot apparaît en bas à droite.",
+  },
+];
+
 export default function Home() {
   const [state, setState] = useState<AppState>("idle");
   const [url, setUrl] = useState("");
@@ -26,7 +52,6 @@ export default function Home() {
 
   const addLine = useCallback((text: string, color?: string) => {
     setLines((prev) => [...prev, { text, color }]);
-    // Auto-scroll
     setTimeout(() => {
       if (terminalRef.current) {
         terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
@@ -189,95 +214,165 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero */}
-      <section className="flex-1 flex flex-col items-center justify-center px-6 py-24 text-center">
-        <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
-          SOMA{" "}
-          <span className="bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">
-            Chat
-          </span>
-        </h1>
-        <p className="mt-4 max-w-lg text-lg text-[#8b8b9e]">
-          Un assistant IA pour votre site, en 5 minutes.
-        </p>
-
-        {/* URL Form */}
-        <form onSubmit={handleSubmit} className="mt-10 flex w-full max-w-md gap-3">
-          <input
-            type="url"
-            placeholder="https://votre-site.com"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            disabled={state === "running"}
-            className="flex-1 rounded-lg border border-[#2a2a34] bg-[#111118] px-4 py-3 text-sm text-[#f0f0f3] placeholder-[#55556a] outline-none focus:border-blue-500 transition-colors disabled:opacity-50"
-          />
-          <button
-            type="submit"
-            disabled={state === "running" || !url.trim()}
-            className="rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {state === "running" ? "En cours..." : "Créer"}
-          </button>
-        </form>
-
-        {state === "idle" && !completeData && (
-          <p className="mt-3 text-xs text-[#55556a]">
-            10 pages max (free tier) &mdash; Aucune carte requise.
+      {/* Section 1: Hero */}
+      <section className="pt-24 pb-12 max-[767px]:pt-16 max-[767px]:pb-8">
+        <div className="mx-auto max-w-[940px] px-6">
+          <h1 className="text-5xl font-semibold tracking-tight max-[767px]:text-3xl">
+            SOMA{" "}
+            <span className="bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">
+              Chat
+            </span>
+          </h1>
+          <p className="mt-4 max-w-[600px] text-lg text-[#8b8b9e]">
+            Un assistant IA pour votre site web, entraîné sur votre contenu
+            public. Gratuit, open source, prêt en 5 minutes.
           </p>
-        )}
+        </div>
       </section>
 
-      {/* Terminal + Preview + Snippet */}
-      {(state === "running" || state === "complete") && (
-        <section className="px-6 pb-12">
-          <div className="mx-auto max-w-2xl">
-            {/* Terminal window */}
-            <div className="rounded-lg border border-[#1f1f28] bg-[#0a0a0f] overflow-hidden">
-              {/* VSCode-style tab bar */}
-              <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#1f1f28] bg-[#0d0d14]">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] uppercase tracking-wider text-[#55556a]">Terminal</span>
-                </div>
-                <div className="flex items-center gap-1 text-[10px] text-[#55556a]">
-                  <span>soma-chat</span>
-                  <span className="text-[#2a2a34]">|</span>
-                  <span>node</span>
-                </div>
-              </div>
-              {/* Terminal content */}
-              <div
-                ref={terminalRef}
-                className="p-4 font-mono text-xs leading-5 max-h-72 overflow-y-auto"
-              >
-                {lines.map((line, i) => (
-                  <div key={i} style={{ color: line.color || "#f0f0f3" }}>
-                    {line.text || "\u00A0"}
-                  </div>
+      {/* Section 2: Features + Price sidebar */}
+      <section className="pb-16">
+        <div className="mx-auto max-w-[940px] px-6">
+          <div className="grid grid-cols-1 gap-12 min-[768px]:grid-cols-[1fr_280px]">
+            {/* Features */}
+            <div>
+              <h2 className="text-2xl font-medium">Fonctionnalités</h2>
+              <ul className="mt-6 space-y-3">
+                {features.map((feature) => (
+                  <li
+                    key={feature}
+                    className="flex items-start gap-3 text-[15px] text-[#a0a0b0]"
+                  >
+                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-blue-500" />
+                    {feature}
+                  </li>
                 ))}
-                {state === "running" && (
-                  <span className="inline-block w-[2px] h-3.5 bg-[#a0a0b0] animate-pulse" />
-                )}
-              </div>
+              </ul>
             </div>
 
-            {/* Live Preview */}
-            {state === "complete" && completeData && (
-              <div className="mt-6">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-xs uppercase tracking-wider text-[#55556a]">
-                    Aperçu
-                  </p>
-                  <p className="text-[10px] text-[#3f3f4a]">
-                    Les données de votre site sont utilisées en temps réel
-                  </p>
+            {/* Price sidebar */}
+            <div className="self-start rounded-xl border border-[#1f1f28] bg-[#111118] p-8 text-center">
+              <p className="text-xs font-medium uppercase tracking-wider text-[#8b8b9e]">
+                Tarif
+              </p>
+              <p className="mt-2 text-3xl font-semibold text-[#3fb950]">
+                Gratuit
+              </p>
+              <p className="mt-1 text-xs text-[#55556a]">
+                10 pages &middot; Open source
+              </p>
+              <a
+                href="#sandbox"
+                className="mt-6 inline-block w-full rounded-full bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-500 transition-colors"
+              >
+                Créer mon chatbot
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 3: How it works */}
+      <section className="pb-16 border-t border-[#1f1f28] pt-16">
+        <div className="mx-auto max-w-[940px] px-6">
+          <h2 className="text-2xl font-medium mb-10">Comment ça marche</h2>
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+            {steps.map((step, i) => (
+              <div key={i}>
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600/20 text-blue-400 font-bold text-lg">
+                  {i + 1}
                 </div>
+                <h3 className="font-medium mb-2 text-[#f0f0f3]">
+                  {step.title}
+                </h3>
+                <p className="text-sm text-[#8b8b9e] leading-relaxed">
+                  {step.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Section 4: Sandbox */}
+      <section id="sandbox" className="pb-16 border-t border-[#1f1f28] pt-16">
+        <div className="mx-auto max-w-[940px] px-6">
+          <h2 className="text-2xl font-medium mb-6">Essayer maintenant</h2>
+
+          {/* URL Form — always visible */}
+          <form onSubmit={handleSubmit} className="flex w-full max-w-lg gap-3">
+            <input
+              type="url"
+              placeholder="https://votre-site.com"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              disabled={state === "running"}
+              className="flex-1 rounded-lg border border-[#2a2a34] bg-[#111118] px-4 py-3 text-sm text-[#f0f0f3] placeholder-[#55556a] outline-none focus:border-blue-500 transition-colors disabled:opacity-50"
+            />
+            <button
+              type="submit"
+              disabled={state === "running" || !url.trim()}
+              className="rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {state === "running" ? "En cours..." : "Créer"}
+            </button>
+          </form>
+          <p className="mt-2 text-xs text-[#55556a]">
+            10 pages max (free tier) &mdash; Aucune carte requise.
+          </p>
+
+          {/* Terminal + Preview + Snippet — only when running or complete */}
+          {(state === "running" || state === "complete") && (
+            <div className="mt-8">
+              {/* Terminal window */}
+              <div className="rounded-lg border border-[#1f1f28] bg-[#0a0a0f] overflow-hidden">
+                {/* VSCode-style tab bar */}
+                <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#1f1f28] bg-[#0d0d14]">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] uppercase tracking-wider text-[#55556a]">
+                      Terminal
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 text-[10px] text-[#55556a]">
+                    <span>soma-chat</span>
+                    <span className="text-[#2a2a34]">|</span>
+                    <span>node</span>
+                  </div>
+                </div>
+                {/* Terminal content */}
                 <div
-                  className="rounded-lg border border-[#1f1f28] bg-[#0a0a0f] overflow-hidden"
-                  style={{ height: "480px" }}
+                  ref={terminalRef}
+                  className="p-4 font-mono text-xs leading-5 max-h-72 overflow-y-auto"
                 >
-                  <iframe
-                    className="w-full h-full border-0"
-                    srcDoc={`<!DOCTYPE html>
+                  {lines.map((line, i) => (
+                    <div key={i} style={{ color: line.color || "#f0f0f3" }}>
+                      {line.text || "\u00A0"}
+                    </div>
+                  ))}
+                  {state === "running" && (
+                    <span className="inline-block w-[2px] h-3.5 bg-[#a0a0b0] animate-pulse" />
+                  )}
+                </div>
+              </div>
+
+              {/* Live Preview */}
+              {state === "complete" && completeData && (
+                <div className="mt-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs uppercase tracking-wider text-[#55556a]">
+                      Aperçu
+                    </p>
+                    <p className="text-[10px] text-[#3f3f4a]">
+                      Les données de votre site sont utilisées en temps réel
+                    </p>
+                  </div>
+                  <div
+                    className="rounded-lg border border-[#1f1f28] bg-[#0a0a0f] overflow-hidden"
+                    style={{ height: "480px" }}
+                  >
+                    <iframe
+                      className="w-full h-full border-0"
+                      srcDoc={`<!DOCTYPE html>
 <html>
 <head>
 <style>
@@ -289,153 +384,159 @@ export default function Home() {
 <script src="${siteUrl}/widget.js" data-site-id="${completeData.siteId}"><\/script>
 </body>
 </html>`}
-                    title="Aperçu du chatbot"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Stripe-style snippet card */}
-            {state === "complete" && completeData && (
-              <div className="mt-6 rounded-xl border border-[#1f1f28] bg-[#111118] overflow-hidden">
-                {/* Header bar */}
-                <div className="flex items-center justify-between px-5 py-3 bg-[#0d0d14] border-b border-[#1f1f28]">
-                  <div className="flex items-center gap-2.5">
-                    <span className="inline-block w-2 h-2 rounded-full bg-[#3fb950]" />
-                    <span className="text-sm font-medium text-[#f0f0f3]">Votre chatbot est prêt</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="rounded-full bg-[#1a1a24] px-2.5 py-0.5 text-[10px] text-[#8b8b9e]">
-                      {completeData.pagesIndexed} pages
-                    </span>
-                    <span className="rounded-full bg-[#1a1a24] px-2.5 py-0.5 text-[10px] text-[#8b8b9e]">
-                      {completeData.chunksIndexed} chunks
-                    </span>
-                    <span className="rounded-full bg-[#1a1a24] px-2.5 py-0.5 text-[10px] text-[#8b8b9e]">
-                      {(completeData.elapsedMs / 1000).toFixed(1)}s
-                    </span>
+                      title="Aperçu du chatbot"
+                    />
                   </div>
                 </div>
+              )}
 
-                {/* Instruction */}
-                <div className="px-5 py-4 border-b border-[#1f1f28]">
-                  <p className="text-sm text-[#8b8b9e]">
-                    Collez ce snippet dans votre HTML, juste avant{" "}
-                    <code className="text-[#f0f0f3] bg-[#1a1a24] px-1.5 py-0.5 rounded text-xs">
-                      &lt;/body&gt;
-                    </code>
-                  </p>
-                </div>
-
-                {/* Code block */}
-                <div className="relative">
-                  {/* Tab bar */}
-                  <div className="flex items-center px-4 py-1.5 bg-[#0d0d14] border-b border-[#1f1f28]">
-                    <span className="text-[10px] uppercase tracking-wider text-[#8b8b9e] border-b border-blue-500 pb-1.5">
-                      HTML
-                    </span>
+              {/* Stripe-style snippet card */}
+              {state === "complete" && completeData && (
+                <div className="mt-6 rounded-xl border border-[#1f1f28] bg-[#111118] overflow-hidden">
+                  {/* Header bar */}
+                  <div className="flex items-center justify-between px-5 py-3 bg-[#0d0d14] border-b border-[#1f1f28]">
+                    <div className="flex items-center gap-2.5">
+                      <span className="inline-block w-2 h-2 rounded-full bg-[#3fb950]" />
+                      <span className="text-sm font-medium text-[#f0f0f3]">
+                        Votre chatbot est prêt
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-full bg-[#1a1a24] px-2.5 py-0.5 text-[10px] text-[#8b8b9e]">
+                        {completeData.pagesIndexed} pages
+                      </span>
+                      <span className="rounded-full bg-[#1a1a24] px-2.5 py-0.5 text-[10px] text-[#8b8b9e]">
+                        {completeData.chunksIndexed} chunks
+                      </span>
+                      <span className="rounded-full bg-[#1a1a24] px-2.5 py-0.5 text-[10px] text-[#8b8b9e]">
+                        {(completeData.elapsedMs / 1000).toFixed(1)}s
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Code with line numbers */}
-                  <div className="flex overflow-x-auto bg-[#0a0a0f] p-4">
-                    {/* Line numbers */}
-                    <div className="flex flex-col w-8 shrink-0 select-none text-right pr-4 font-mono text-xs leading-5 text-[#3f3f4a]">
-                      <span>1</span>
-                      <span>2</span>
-                      <span>3</span>
+                  {/* Instruction */}
+                  <div className="px-5 py-4 border-b border-[#1f1f28]">
+                    <p className="text-sm text-[#8b8b9e]">
+                      Collez ce snippet dans votre HTML, juste avant{" "}
+                      <code className="text-[#f0f0f3] bg-[#1a1a24] px-1.5 py-0.5 rounded text-xs">
+                        &lt;/body&gt;
+                      </code>
+                    </p>
+                  </div>
+
+                  {/* Code block */}
+                  <div className="relative">
+                    {/* Tab bar */}
+                    <div className="flex items-center px-4 py-1.5 bg-[#0d0d14] border-b border-[#1f1f28]">
+                      <span className="text-[10px] uppercase tracking-wider text-[#8b8b9e] border-b border-blue-500 pb-1.5">
+                        HTML
+                      </span>
                     </div>
 
-                    {/* Syntax-highlighted code */}
-                    <pre className="font-mono text-xs leading-5 whitespace-pre">
-                      <span style={{ color: "#f85149" }}>&lt;script</span>
-                      {"\n"}
-                      <span>{"  "}</span>
-                      <span style={{ color: "#d2a8ff" }}>src</span>
-                      <span style={{ color: "#f0f0f3" }}>=</span>
-                      <span style={{ color: "#a5d6ff" }}>&quot;{siteUrl}/widget.js&quot;</span>
-                      {" "}
-                      <span style={{ color: "#d2a8ff" }}>data-site-id</span>
-                      <span style={{ color: "#f0f0f3" }}>=</span>
-                      <span style={{ color: "#a5d6ff" }}>&quot;{completeData.siteId}&quot;</span>
-                      {"\n"}
-                      <span style={{ color: "#f85149" }}>&gt;&lt;/script&gt;</span>
-                    </pre>
+                    {/* Code with line numbers */}
+                    <div className="flex overflow-x-auto bg-[#0a0a0f] p-4">
+                      {/* Line numbers */}
+                      <div className="flex flex-col w-8 shrink-0 select-none text-right pr-4 font-mono text-xs leading-5 text-[#3f3f4a]">
+                        <span>1</span>
+                        <span>2</span>
+                        <span>3</span>
+                      </div>
+
+                      {/* Syntax-highlighted code */}
+                      <pre className="font-mono text-xs leading-5 whitespace-pre">
+                        <span style={{ color: "#f85149" }}>&lt;script</span>
+                        {"\n"}
+                        <span>{"  "}</span>
+                        <span style={{ color: "#d2a8ff" }}>src</span>
+                        <span style={{ color: "#f0f0f3" }}>=</span>
+                        <span style={{ color: "#a5d6ff" }}>
+                          &quot;{siteUrl}/widget.js&quot;
+                        </span>
+                        {" "}
+                        <span style={{ color: "#d2a8ff" }}>data-site-id</span>
+                        <span style={{ color: "#f0f0f3" }}>=</span>
+                        <span style={{ color: "#a5d6ff" }}>
+                          &quot;{completeData.siteId}&quot;
+                        </span>
+                        {"\n"}
+                        <span style={{ color: "#f85149" }}>
+                          &gt;&lt;/script&gt;
+                        </span>
+                      </pre>
+                    </div>
+
+                    {/* Copy button */}
+                    <button
+                      onClick={handleCopy}
+                      className="absolute top-10 right-3 rounded-md bg-[#1a1a24] border border-[#2a2a34] px-3 py-1.5 text-xs text-[#8b8b9e] hover:text-[#f0f0f3] transition-colors"
+                    >
+                      {copied ? "Copié !" : "Copier"}
+                    </button>
                   </div>
 
-                  {/* Copy button */}
-                  <button
-                    onClick={handleCopy}
-                    className="absolute top-10 right-3 rounded-md bg-[#1a1a24] border border-[#2a2a34] px-3 py-1.5 text-xs text-[#8b8b9e] hover:text-[#f0f0f3] transition-colors"
-                  >
-                    {copied ? "Copié !" : "Copier"}
-                  </button>
+                  {/* Bottom bar */}
+                  <div className="flex items-center justify-between px-5 py-3 border-t border-[#1f1f28] bg-[#0d0d14]">
+                    <button
+                      onClick={handleReset}
+                      className="text-xs text-[#8b8b9e] hover:text-[#f0f0f3] transition-colors"
+                    >
+                      Recommencer
+                    </button>
+                    <span className="text-[10px] text-[#3f3f4a]">
+                      Gratuit &middot; 10 pages &middot; Powered by SOMA Studio
+                    </span>
+                  </div>
                 </div>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
 
-                {/* Bottom bar */}
-                <div className="flex items-center justify-between px-5 py-3 border-t border-[#1f1f28] bg-[#0d0d14]">
-                  <button
-                    onClick={handleReset}
-                    className="text-xs text-[#8b8b9e] hover:text-[#f0f0f3] transition-colors"
-                  >
-                    Recommencer
-                  </button>
-                  <span className="text-[10px] text-[#3f3f4a]">
-                    Gratuit &middot; 10 pages &middot; Powered by SOMA Studio
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* How it works */}
-      {state === "idle" && !completeData && (
-        <section className="border-t border-[#1f1f28] px-6 py-20">
-          <h2 className="text-center text-2xl font-semibold mb-12">
-            Comment ça marche
+      {/* Section 5: Bottom CTA */}
+      <section className="pb-16 border-t border-[#1f1f28] pt-16">
+        <div className="mx-auto max-w-[940px] px-6 text-center">
+          <h2 className="text-2xl font-medium">
+            Besoin de plus de 10 pages ?
           </h2>
-          <div className="mx-auto grid max-w-3xl gap-8 sm:grid-cols-3">
-            {[
-              {
-                step: "1",
-                title: "Entrez votre URL",
-                desc: "On prend l\u2019URL de votre site et on crawle toutes les pages publiques.",
-              },
-              {
-                step: "2",
-                title: "On indexe votre contenu",
-                desc: "Le contenu est découpé en chunks, transformé en vecteurs et stocké dans Qdrant.",
-              },
-              {
-                step: "3",
-                title: "Collez le script",
-                desc: "Un simple <script> à ajouter dans votre HTML. Le chatbot apparaît en bas à droite.",
-              },
-            ].map((item) => (
-              <div key={item.step} className="text-center">
-                <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600/20 text-blue-400 font-bold text-lg">
-                  {item.step}
-                </div>
-                <h3 className="font-medium mb-2">{item.title}</h3>
-                <p className="text-sm text-[#8b8b9e]">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+          <p className="mt-3 text-[#8b8b9e]">
+            Nous construisons des assistants IA sur mesure, connectés à vos
+            documents internes.
+          </p>
+          <a
+            href="https://somastudio.xyz/contact"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-block rounded-full border border-[#2a2a34] bg-[#111118] px-6 py-2.5 text-sm font-medium text-[#f0f0f3] hover:bg-[#1a1a24] transition-colors"
+          >
+            Discuter de votre projet
+          </a>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="border-t border-[#1f1f28] px-6 py-8 text-center text-sm text-[#55556a]">
-        Open source &middot; SOMA Studio &middot;{" "}
-        <a
-          href="https://somastudio.xyz"
-          className="text-[#8b8b9e] hover:text-[#f0f0f3] transition-colors"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          somastudio.xyz
-        </a>
+      <footer className="mt-auto border-t border-[#1f1f28] px-6 py-8">
+        <div className="mx-auto max-w-[940px] flex items-center justify-between text-sm text-[#55556a]">
+          <span>Open source (MIT)</span>
+          <div className="flex items-center gap-4">
+            <a
+              href="https://github.com/soma-studio/soma-chat"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#8b8b9e] transition-colors"
+            >
+              GitHub
+            </a>
+            <a
+              href="https://somastudio.xyz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#8b8b9e] transition-colors"
+            >
+              SOMA Studio
+            </a>
+          </div>
+        </div>
       </footer>
     </div>
   );
