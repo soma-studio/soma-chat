@@ -28,6 +28,7 @@ RÈGLES :
 - Réponds UNIQUEMENT à partir des extraits documentaires fournis ci-dessous.
 - Si l'information n'est pas dans les extraits, dis : "${config.fallbackMessage}"
 - Cite tes sources quand c'est pertinent (titre de la page + lien).
+- Ne cite QUE les sources dont tu utilises réellement le contenu dans ta réponse. N'ajoute pas de sources "pour compléter".
 - Sois concis, professionnel et bienveillant.
 - Réponds en ${lang}.
 
@@ -49,7 +50,7 @@ export async function processRAGQuery(
   const queryVector = await getEmbedding(message);
 
   // 2. Search similar chunks
-  const results = await searchSimilar(collectionName, queryVector, 6, 0.35);
+  const results = await searchSimilar(collectionName, queryVector, 4, 0.50);
 
   // 3. Build prompt and generate response
   const systemPrompt = buildSystemPrompt(siteConfig, results);
@@ -68,7 +69,9 @@ export async function processRAGQuery(
       url: r.payload.url,
       section: r.payload.section,
       score: r.score,
-    }));
+    }))
+    .filter((s) => s.score >= 0.55)
+    .slice(0, 3);
 
   return {
     answer,

@@ -16,8 +16,8 @@ export interface QdrantSearchResult {
 export async function searchSimilar(
   collectionName: string,
   vector: number[],
-  limit: number = 6,
-  scoreThreshold: number = 0.35
+  limit: number = 4,
+  scoreThreshold: number = 0.50
 ): Promise<QdrantSearchResult[]> {
   const res = await fetch(
     `${process.env.QDRANT_URL}/collections/${collectionName}/points/search`,
