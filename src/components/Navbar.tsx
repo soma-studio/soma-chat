@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { useScrollDirection } from '@/hooks/useScrollDirection'
 
 const SITE_URL = 'https://somastudio.xyz'
 
@@ -14,9 +16,16 @@ const NAV_LINKS = [
 
 const CALENDLY_URL = 'https://calendly.com/hello-somastudio/30min'
 
+// "Nos services" is always active since this is a service sub-page
+const ACTIVE_INDEX = 1
+
 export function Navbar() {
+  const scrollDirection = useScrollDirection()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+
+  const pillIndex = hoveredIndex ?? ACTIVE_INDEX
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20)
@@ -25,12 +34,15 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // "Nos services" is the active link since this is a service sub-page
-  const activeHref = '/nos-services'
-
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-[9999] transition-all duration-300">
+      <header
+        className={`fixed left-0 right-0 top-0 z-[9999] transition-all duration-300 ${
+          scrollDirection === 'down' && !isMobileMenuOpen
+            ? '-translate-y-full'
+            : 'translate-y-0'
+        }`}
+      >
         <div className="mx-auto px-4">
           <nav
             className={`mx-auto mt-4 flex w-fit items-center gap-8 rounded-[100px] px-6 py-3 transition-all duration-300 ${
@@ -49,27 +61,35 @@ export function Navbar() {
             </a>
 
             {/* Desktop Navigation */}
-            <ul className="hidden items-center gap-1 min-[992px]:flex">
-              {NAV_LINKS.map((link) => {
-                const isActive = link.href === activeHref
-                return (
-                  <li key={link.href} className="relative">
-                    {isActive && (
-                      <span className="absolute inset-0 rounded-[100px] bg-[#0e1527]" />
-                    )}
-                    <a
-                      href={`${SITE_URL}${link.href}`}
-                      className={`relative z-10 block rounded-[100px] px-5 py-2.5 text-[13px] font-medium uppercase tracking-wider transition-colors duration-300 ${
-                        isActive
-                          ? 'text-white'
-                          : 'text-[#333] hover:text-[#000]'
-                      }`}
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                )
-              })}
+            <ul
+              className="hidden items-center gap-1 min-[992px]:flex"
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              {NAV_LINKS.map((link, idx) => (
+                <li
+                  key={link.href}
+                  className="relative"
+                  onMouseEnter={() => setHoveredIndex(idx)}
+                >
+                  {pillIndex === idx && (
+                    <motion.span
+                      layoutId="nav-pill"
+                      className="absolute inset-0 rounded-[100px] bg-[#0e1527]"
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <a
+                    href={`${SITE_URL}${link.href}`}
+                    className={`relative z-10 block rounded-[100px] px-5 py-2.5 text-[13px] font-medium uppercase tracking-wider transition-colors duration-300 ${
+                      pillIndex === idx
+                        ? 'text-white'
+                        : 'text-[#333] hover:text-[#000]'
+                    }`}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
 
             {/* CTA + Mobile Toggle */}
@@ -121,7 +141,7 @@ export function Navbar() {
                 key={link.href}
                 href={`${SITE_URL}${link.href}`}
                 className={`text-lg font-medium ${
-                  link.href === activeHref ? 'text-[#000]' : 'text-[#717171]'
+                  link.href === NAV_LINKS[ACTIVE_INDEX].href ? 'text-[#000]' : 'text-[#717171]'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
