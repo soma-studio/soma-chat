@@ -298,13 +298,19 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
           </div>
         </div>
 
-        {/* Sandbox — unified dark card */}
-        <div id="sandbox" className="mt-8 overflow-hidden rounded-[var(--radius-default)] border border-[#1f1f28] bg-[#0a0a0f]">
+        {/* Sandbox */}
+        <div className="mt-20">
+          <h2 className="text-h3 font-medium">
+            Cr&eacute;er mon chatbot
+          </h2>
+
+          {/* Unified dark card */}
+          <div id="sandbox" className="mt-10 overflow-hidden rounded-[var(--radius-default)] border border-[#1f1f28] bg-[#0a0a0f]">
 
           {/* Form header */}
           <div className="border-b border-[#1f1f28] bg-[#0d0d14] px-5 py-4">
             <p className="mb-3 text-sm font-medium text-[#f0f0f3]">
-              Cr&eacute;er mon chatbot
+              Collez l&apos;URL de votre site web
             </p>
             <form onSubmit={handleSubmit} className="flex w-full gap-3">
               <input
@@ -508,6 +514,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
             </div>
           )}
 
+          </div>
         </div>
 
         {/* Upsell: Free vs Custom comparison */}
