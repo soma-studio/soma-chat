@@ -247,7 +247,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
                   key={f.id || f.feature}
                   className="flex items-start gap-3 text-body text-body-text"
                 >
-                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#C8E6FF]" />
+                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#DDD3F5]" />
                   {f.feature}
                 </li>
               ))}
@@ -283,7 +283,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
               <div key={step.id || i} className="flex items-start gap-5">
                 <span
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-dark"
-                  style={{ backgroundColor: '#C8E6FF' }}
+                  style={{ backgroundColor: '#DDD3F5' }}
                 >
                   {String(i + 1).padStart(2, '0')}
                 </span>
@@ -320,7 +320,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 disabled={state === "running"}
-                className="flex-1 rounded-[var(--radius-default)] border border-[#2a2a34] bg-[#0a0a0f] px-4 py-2.5 text-md text-[#f0f0f3] placeholder-[#55556a] outline-none transition-colors focus:border-[#C8E6FF] disabled:opacity-50"
+                className="flex-1 rounded-[var(--radius-default)] border border-[#2a2a34] bg-[#0a0a0f] px-4 py-2.5 text-md text-[#f0f0f3] placeholder-[#55556a] outline-none transition-colors focus:border-[#DDD3F5] disabled:opacity-50"
               />
               <button
                 type="submit"
@@ -533,7 +533,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
             {/* Free tier card */}
             <div className="rounded-[var(--radius-default)] border border-border bg-white p-8">
               <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#C8E6FF] text-sm font-semibold text-dark">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#DDD3F5] text-sm font-semibold text-dark">
                   &#10003;
                 </span>
                 <h3 className="text-body font-semibold text-title-text">
