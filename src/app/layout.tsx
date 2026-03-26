@@ -26,6 +26,20 @@ export const metadata: Metadata = {
     default: 'Chatbot IA gratuit — SOMA Studio',
     template: '%s — SOMA Studio',
   },
+  description:
+    'Chatbot IA gratuit par SOMA Studio. Testez un assistant intelligent directement sur votre navigateur.',
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    siteName: 'SOMA Studio',
+    images: [
+      { url: '/og-default.png', width: 1200, height: 630, alt: 'SOMA Chat — Chatbot IA gratuit pour votre site web' },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/og-default.png'],
+  },
 };
 
 export default function RootLayout({
