@@ -330,7 +330,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
                 {state === "running" ? "En cours..." : "Cr\u00e9er"}
               </button>
             </form>
-            <p className="mt-2 text-[11px] text-[#55556a]">
+            <p className="mt-2 text-[11px] text-[#8b8b9e]">
               10 pages max. scrapp&eacute;es — Aucune carte requise.
             </p>
           </div>
