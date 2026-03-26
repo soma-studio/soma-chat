@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Manrope, Roboto } from "next/font/google";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -33,9 +36,12 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${manrope.variable} ${roboto.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
+        <GoogleAnalytics />
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
