@@ -35,11 +35,43 @@ export async function POST(req: NextRequest) {
   }
 
   // Validate URL format
+  let parsedUrl: URL;
   try {
-    new URL(url);
+    parsedUrl = new URL(url);
   } catch {
     return Response.json(
       { error: "Invalid URL format" },
+      { status: 400, headers: CORS_HEADERS }
+    );
+  }
+
+  // Block non-HTTP protocols
+  if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+    return Response.json(
+      { error: "Only HTTP/HTTPS URLs are allowed" },
+      { status: 400, headers: CORS_HEADERS }
+    );
+  }
+
+  // Block private/internal IPs (SSRF protection)
+  const hostname = parsedUrl.hostname.toLowerCase();
+  const BLOCKED_HOSTS = [
+    'localhost', '127.0.0.1', '0.0.0.0', '[::1]',
+    '169.254.169.254',  // AWS metadata
+    'metadata.google.internal',  // GCP metadata
+  ];
+  const BLOCKED_PREFIXES = [
+    '10.', '172.16.', '172.17.', '172.18.', '172.19.',
+    '172.20.', '172.21.', '172.22.', '172.23.', '172.24.',
+    '172.25.', '172.26.', '172.27.', '172.28.', '172.29.',
+    '172.30.', '172.31.', '192.168.',
+  ];
+  if (
+    BLOCKED_HOSTS.includes(hostname) ||
+    BLOCKED_PREFIXES.some(p => hostname.startsWith(p))
+  ) {
+    return Response.json(
+      { error: "Internal URLs are not allowed" },
       { status: 400, headers: CORS_HEADERS }
     );
   }
@@ -52,7 +84,11 @@ export async function POST(req: NextRequest) {
       const encoder = new TextEncoder();
 
       function send(event: Record<string, unknown>) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
+        try {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
+        } catch {
+          // Client disconnected — ignore write error
+        }
       }
 
       runPipeline({

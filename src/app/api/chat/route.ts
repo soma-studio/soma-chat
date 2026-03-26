@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSite } from "@/lib/sites";
 import { processRAGQuery } from "@/lib/rag";
+import { checkRateLimit } from "@/lib/rate-limiter";
 import type { SiteConfig } from "@/types";
 
 const corsHeaders = {
@@ -8,28 +9,6 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
-
-// In-memory rate limiting: siteId -> { count, resetTime }
-const rateLimits = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT = 20; // requests per minute
-const RATE_WINDOW = 60_000; // 1 minute
-
-function checkRateLimit(siteId: string): boolean {
-  const now = Date.now();
-  const entry = rateLimits.get(siteId);
-
-  if (!entry || now > entry.resetTime) {
-    rateLimits.set(siteId, { count: 1, resetTime: now + RATE_WINDOW });
-    return true;
-  }
-
-  if (entry.count >= RATE_LIMIT) {
-    return false;
-  }
-
-  entry.count++;
-  return true;
-}
 
 export async function OPTIONS() {
   return new NextResponse(null, { status: 204, headers: corsHeaders });
@@ -63,8 +42,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate siteId format (prevents injection into Qdrant collection names)
+    if (!/^[a-zA-Z0-9_-]+$/.test(siteId)) {
+      return NextResponse.json(
+        { error: "Invalid siteId format" },
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
     // Check rate limit
-    if (!checkRateLimit(siteId)) {
+    if (!(await checkRateLimit(siteId))) {
       return NextResponse.json(
         { error: "Rate limit exceeded. Please try again later." },
         { status: 429, headers: corsHeaders }

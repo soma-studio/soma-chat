@@ -3,7 +3,22 @@
  * Only inserts if Supabase credentials are configured and an email was found.
  */
 
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
+
 const INDUSTRY_ID = "soma-chatbot";
+
+let _supabase: SupabaseClient | null = null;
+
+function getSupabase(): SupabaseClient | null {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
+  if (!_supabase) {
+    _supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+  }
+  return _supabase;
+}
 
 interface LeadCaptureData {
   siteUrl: string;
@@ -15,8 +30,8 @@ interface LeadCaptureData {
 }
 
 export async function captureLeadFromChatbot(data: LeadCaptureData): Promise<void> {
-  // Skip if no Supabase credentials
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  const supabase = getSupabase();
+  if (!supabase) {
     console.log("[Lead Capture] Supabase not configured — skipping lead capture");
     return;
   }
@@ -28,11 +43,6 @@ export async function captureLeadFromChatbot(data: LeadCaptureData): Promise<voi
   }
 
   try {
-    const { createClient } = await import("@supabase/supabase-js");
-    const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
 
     // Check if this site URL is already a lead (avoid duplicates)
     const { data: existingLeads } = await supabase

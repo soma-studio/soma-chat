@@ -3,7 +3,7 @@ export interface ScrapedPage {
   title: string;
   description: string;
   content: string;
-  type: string; // 'page' | 'blog' | 'product' | 'faq'
+  type: 'page' | 'blog' | 'product' | 'faq';
   scrapedAt: string;
 }
 
@@ -21,7 +21,7 @@ export interface Chunk {
 export interface SiteConfig {
   siteName: string;
   siteUrl: string;
-  language: string; // 'fr' | 'en'
+  language: 'fr' | 'en';
   welcomeMessage: string;
   fallbackMessage: string;
 }
@@ -41,7 +41,7 @@ export interface SiteRecord {
   siteId: string;
   siteUrl: string;
   siteName: string;
-  language: string;
+  language: 'fr' | 'en';
   welcomeMessage: string;
   fallbackMessage: string;
   accentColor: string;

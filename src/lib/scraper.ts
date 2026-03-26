@@ -203,12 +203,16 @@ export function urlToSlug(url: string): string {
   }
 }
 
-function detectPageType(url: string): string {
-  const pathname = new URL(url).pathname.toLowerCase();
-  if (pathname.includes("/blog") || pathname.includes("/article") || pathname.includes("/post")) return "blog";
-  if (pathname.includes("/product") || pathname.includes("/shop") || pathname.includes("/boutique")) return "product";
-  if (pathname.includes("/faq") || pathname.includes("/question")) return "faq";
-  return "page";
+function detectPageType(url: string): ScrapedPage['type'] {
+  try {
+    const pathname = new URL(url).pathname.toLowerCase();
+    if (pathname.includes("/blog") || pathname.includes("/article") || pathname.includes("/post")) return "blog";
+    if (pathname.includes("/product") || pathname.includes("/shop") || pathname.includes("/boutique")) return "product";
+    if (pathname.includes("/faq") || pathname.includes("/question")) return "faq";
+    return "page";
+  } catch {
+    return "page";
+  }
 }
 
 // --- JSON-LD extraction ---

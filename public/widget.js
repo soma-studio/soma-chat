@@ -15,6 +15,24 @@
   var accentColor = script.getAttribute("data-color") || "#3b82f6";
   var apiBase = new URL(script.src).origin;
 
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function isSafeUrl(url) {
+    try {
+      var parsed = new URL(url, window.location.href);
+      return ['http:', 'https:', 'mailto:'].indexOf(parsed.protocol) !== -1;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // --- Styles ---
   var css = `
     :host {
@@ -503,7 +521,9 @@
         renderSuggestions();
       }
     })
-    .catch(function () {});
+    .catch(function (err) {
+      console.warn("SOMA Chat: failed to load site config", err);
+    });
 
   // --- Toggle ---
   function toggle() {
@@ -604,10 +624,10 @@
       // Italic: *text* (single asterisk, not preceded by another *)
       .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, "<em>$1</em>")
       // Links: [text](url)
-      .replace(
-        /\[([^\]]+)\]\(([^)]+)\)/g,
-        '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
-      );
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(_, text, url) {
+        if (!isSafeUrl(url)) return escapeHtml(text);
+        return '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(text) + '</a>';
+      });
   }
 
   function renderMarkdown(text) {
@@ -630,7 +650,7 @@
       var headingMatch = line.match(/^(#{1,3})\s+(.+)$/);
       if (headingMatch) {
         flushList();
-        result.push('<div class="soma-heading">' + applyInlineFormatting(headingMatch[2]) + "</div>");
+        result.push('<div class="soma-heading">' + applyInlineFormatting(escapeHtml(headingMatch[2])) + "</div>");
         continue;
       }
 
@@ -646,7 +666,7 @@
       if (olMatch) {
         if (listType && listType !== "ol") flushList();
         listType = "ol";
-        listBuffer.push("<li>" + applyInlineFormatting(olMatch[1]) + "</li>");
+        listBuffer.push("<li>" + applyInlineFormatting(escapeHtml(olMatch[1])) + "</li>");
         continue;
       }
 
@@ -655,7 +675,7 @@
       if (ulMatch) {
         if (listType && listType !== "ul") flushList();
         listType = "ul";
-        listBuffer.push("<li>" + applyInlineFormatting(ulMatch[1]) + "</li>");
+        listBuffer.push("<li>" + applyInlineFormatting(escapeHtml(ulMatch[1])) + "</li>");
         continue;
       }
 
@@ -669,7 +689,7 @@
       }
 
       // Regular text
-      result.push(applyInlineFormatting(line));
+      result.push(applyInlineFormatting(escapeHtml(line)));
     }
 
     flushList();

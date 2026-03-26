@@ -16,6 +16,16 @@ interface CompleteData {
   elapsedMs: number;
 }
 
+type PipelineEvent =
+  | { type: "start"; siteId: string; url: string }
+  | { type: "page"; title?: string; url: string; chars: number; current: number; maxPages: number }
+  | { type: "limit"; pagesScraped: number; totalPagesFound: number; message: string }
+  | { type: "analyzing" }
+  | { type: "chunking"; documents: number; totalChunks: number }
+  | { type: "indexing"; indexed: number; total: number; percent: number }
+  | { type: "complete"; siteId: string; pagesIndexed: number; chunksIndexed: number; elapsedMs: number }
+  | { type: "error"; message: string };
+
 const features = [
   "Scraping automatique de votre site (pages publiques)",
   "Découpage intelligent du contenu en chunks",
@@ -49,6 +59,10 @@ export default function Home() {
   const [completeData, setCompleteData] = useState<CompleteData | null>(null);
   const [copied, setCopied] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
+
+  function htmlEncode(str: string): string {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
 
   const addLine = useCallback((text: string, color?: string) => {
     setLines((prev) => [...prev, { text, color }]);
@@ -91,8 +105,14 @@ export default function Home() {
       });
 
       if (!res.ok) {
-        const err = await res.json();
-        addLine(`Erreur: ${err.error || res.statusText}`, "#f85149");
+        let errorMessage = res.statusText;
+        try {
+          const err = await res.json();
+          errorMessage = err.error || errorMessage;
+        } catch {
+          // Response body is not valid JSON (e.g. 502 HTML page)
+        }
+        addLine(`Erreur: ${errorMessage}`, "#f85149");
         setState("idle");
         return;
       }
@@ -133,8 +153,7 @@ export default function Home() {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleEvent = (event: any) => {
+  const handleEvent = (event: PipelineEvent) => {
     switch (event.type) {
       case "start":
         addLine(`Scraping ${event.url}...`, "#a0a0b0");
@@ -205,7 +224,7 @@ export default function Home() {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const snippet = completeData
-    ? `<script src="${siteUrl}/widget.js" data-site-id="${completeData.siteId}"><\/script>`
+    ? `<script src="${siteUrl}/widget.js" data-site-id="${completeData.siteId.replace(/[^a-zA-Z0-9-_]/g, '')}"><\/script>`
     : "";
 
   const handleCopy = () => {
@@ -268,7 +287,7 @@ export default function Home() {
               <p className="mt-2 text-3xl font-semibold text-[#3fb950]">
                 Gratuit
               </p>
-              <p className="mt-1 text-xs text-[#55556a]">
+              <p className="mt-1 text-xs text-[#8b8b9e]">
                 10 pages &middot; Open source
               </p>
               <a
@@ -313,6 +332,7 @@ export default function Home() {
           <form onSubmit={handleSubmit} className="flex w-full max-w-lg gap-3">
             <input
               type="text"
+              aria-label="URL de votre site web"
               placeholder="https://votre-site.com"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
@@ -327,7 +347,7 @@ export default function Home() {
               {state === "running" ? "En cours..." : "Créer"}
             </button>
           </form>
-          <p className="mt-2 text-xs text-[#55556a]">
+          <p className="mt-2 text-xs text-[#8b8b9e]">
             10 pages max (free tier) &mdash; Aucune carte requise.
           </p>
 
@@ -339,11 +359,11 @@ export default function Home() {
                 {/* VSCode-style tab bar */}
                 <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#1f1f28] bg-[#0d0d14]">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase tracking-wider text-[#55556a]">
+                    <span className="text-[10px] uppercase tracking-wider text-[#8b8b9e]">
                       Terminal
                     </span>
                   </div>
-                  <div className="flex items-center gap-1 text-[10px] text-[#55556a]">
+                  <div className="flex items-center gap-1 text-[10px] text-[#8b8b9e]">
                     <span>soma-chat</span>
                     <span className="text-[#2a2a34]">|</span>
                     <span>node</span>
@@ -352,6 +372,8 @@ export default function Home() {
                 {/* Terminal content */}
                 <div
                   ref={terminalRef}
+                  aria-live="polite"
+                  aria-label="Progression du pipeline"
                   className="p-4 font-mono text-xs leading-5 max-h-72 overflow-y-auto"
                 >
                   {lines.map((line, i) => (
@@ -369,7 +391,7 @@ export default function Home() {
               {state === "complete" && completeData && (
                 <div className="mt-6">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-xs uppercase tracking-wider text-[#55556a]">
+                    <p className="text-xs uppercase tracking-wider text-[#8b8b9e]">
                       Aperçu
                     </p>
                     <p className="text-[10px] text-[#3f3f4a]">
@@ -391,7 +413,7 @@ export default function Home() {
 </head>
 <body>
 <script>window.SOMA_CHAT_AUTO_OPEN = true;<\/script>
-<script src="${siteUrl}/widget.js" data-site-id="${completeData.siteId}"><\/script>
+<script src="${siteUrl}/widget.js" data-site-id="${htmlEncode(completeData.siteId)}"><\/script>
 </body>
 </html>`}
                       title="Aperçu du chatbot"
@@ -565,7 +587,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="mt-auto border-t border-[#1f1f28] px-6 py-8">
-        <div className="mx-auto max-w-[940px] flex items-center justify-between text-sm text-[#55556a]">
+        <div className="mx-auto max-w-[940px] flex items-center justify-between text-sm text-[#8b8b9e]">
           <span>Open source (MIT)</span>
           <div className="flex items-center gap-4">
             <a
