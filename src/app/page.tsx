@@ -242,7 +242,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <>
       {/* Section 1: Hero */}
       <section className="pt-[60px] pb-[var(--spacing-section)] max-[991px]:pt-6 max-[991px]:pb-[var(--spacing-section-mobile)]">
         <div className="mx-auto max-w-[var(--container-max)] px-[var(--spacing-container)]">
@@ -577,39 +577,12 @@ export default function Home() {
           </p>
           <a
             href="https://somastudio.xyz/contact"
-            target="_blank"
-            rel="noopener noreferrer"
             className="mt-6 inline-block rounded-[100px] border border-[#d9d9d9] bg-white px-5 py-2.5 text-[13px] font-normal text-[#000] transition-all duration-300 hover:bg-[#0e1527] hover:text-white"
           >
             Discuter de votre projet
           </a>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="mt-auto border-t border-[#d9d9d9] px-[var(--spacing-container)] py-8">
-        <div className="mx-auto flex max-w-[var(--container-max)] items-center justify-between text-[13px] text-[#717171]">
-          <span>Open source (MIT)</span>
-          <div className="flex items-center gap-4">
-            <a
-              href="https://github.com/soma-studio/soma-chat"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-colors hover:text-[#333]"
-            >
-              GitHub
-            </a>
-            <a
-              href="https://somastudio.xyz"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-colors hover:text-[#333]"
-            >
-              SOMA Studio
-            </a>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </>
   );
 }

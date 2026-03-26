@@ -1,10 +1,19 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
+import { Manrope, Roboto } from "next/font/google";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import "./globals.css";
 
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",
+  display: "swap",
+});
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["900"],
+  variable: "--font-roboto",
   display: "swap",
 });
 
@@ -26,8 +35,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${manrope.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="fr" className={`${manrope.variable} ${roboto.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col">
+        <Navbar />
+        <main className="flex-1">{children}</main>
+        <Footer />
+      </body>
     </html>
   );
 }
