@@ -156,16 +156,21 @@
     .soma-close:hover { color: #f0f0f3; background: #1a1a24; }
     .soma-close svg { width: 18px; height: 18px; }
     .soma-reset {
-      background: none;
+      background: #111118;
       border: none;
+      border-top: 1px solid #1f1f28;
       cursor: pointer;
       color: #55556a;
-      padding: 4px;
-      border-radius: 6px;
+      padding: 8px 16px;
       display: flex;
       align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 12px;
+      font-family: inherit;
+      width: 100%;
     }
-    .soma-reset:hover { color: #8b8b9e; background: #1a1a24; }
+    .soma-reset:hover { color: #8b8b9e; }
 
     .soma-messages {
       flex: 1;
@@ -374,11 +379,12 @@
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      justify-content: center;
-      padding: 8px 16px 16px;
+      padding: 8px 16px;
+      background: #111118;
+      border-top: 1px solid #1f1f28;
     }
     .soma-suggestion {
-      background: #111118;
+      background: #0d0d14;
       border: 1px solid #2a2a34;
       border-radius: 20px;
       padding: 6px 12px;
@@ -445,7 +451,7 @@
   // Reset button
   var resetBtn = document.createElement("button");
   resetBtn.className = "soma-reset";
-  resetBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>';
+  resetBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg> Nouvelle conversation';
   resetBtn.setAttribute("aria-label", "New conversation");
   resetBtn.style.display = "none";
 
@@ -454,7 +460,6 @@
   closeBtn.innerHTML = closeIcon;
   closeBtn.setAttribute("aria-label", "Close chat");
 
-  headerRight.appendChild(resetBtn);
   headerRight.appendChild(closeBtn);
 
   header.appendChild(headerLeft);
@@ -465,6 +470,12 @@
   var messages = document.createElement("div");
   messages.className = "soma-messages";
   panel.appendChild(messages);
+
+  // Suggestions container (between messages and input bar)
+  var suggestionsContainer = document.createElement("div");
+  suggestionsContainer.className = "soma-suggestions";
+  suggestionsContainer.style.display = "none";
+  panel.appendChild(suggestionsContainer);
 
   // Input bar
   var inputBar = document.createElement("div");
@@ -481,6 +492,10 @@
   inputBar.appendChild(input);
   inputBar.appendChild(sendBtn);
   panel.appendChild(inputBar);
+
+  // Reset button (below input bar)
+  resetBtn.style.display = "none";
+  panel.appendChild(resetBtn);
 
   // Footer
   var footer = document.createElement("div");
@@ -522,8 +537,8 @@
       if (wTitle) wTitle.textContent = siteNameText;
       var wText = messages.querySelector(".soma-welcome-text");
       if (wText) wText.textContent = welcomeText;
-      // Render suggestions if welcome is visible and suggestions arrived
-      if (suggestedQuestions.length > 0 && messages.querySelector(".soma-welcome") && !messages.querySelector(".soma-suggestions")) {
+      // Render suggestions if welcome is visible and suggestions not yet shown
+      if (suggestedQuestions.length > 0 && messages.querySelector(".soma-welcome") && suggestionsContainer.children.length === 0) {
         renderSuggestions();
       }
     })
@@ -585,26 +600,27 @@
 
   // --- Suggestions ---
   function renderSuggestions() {
-    var container = document.createElement("div");
-    container.className = "soma-suggestions";
+    suggestionsContainer.innerHTML = "";
     suggestedQuestions.forEach(function (q) {
       var pill = document.createElement("button");
       pill.className = "soma-suggestion";
       pill.textContent = q;
       pill.addEventListener("click", function () {
+        pill.remove();
+        if (suggestionsContainer.children.length === 0) {
+          suggestionsContainer.style.display = "none";
+        }
         sendQuestion(q);
       });
-      container.appendChild(pill);
+      suggestionsContainer.appendChild(pill);
     });
-    messages.appendChild(container);
+    suggestionsContainer.style.display = "flex";
   }
 
   function sendQuestion(text) {
-    // Remove welcome + suggestions
+    // Remove welcome only
     var welcome = messages.querySelector(".soma-welcome");
     if (welcome) welcome.remove();
-    var sugg = messages.querySelector(".soma-suggestions");
-    if (sugg) sugg.remove();
 
     input.value = text;
     send();
@@ -613,6 +629,8 @@
   // --- Reset conversation ---
   resetBtn.addEventListener("click", function () {
     messages.innerHTML = "";
+    suggestionsContainer.innerHTML = "";
+    suggestionsContainer.style.display = "none";
     resetBtn.style.display = "none";
     showWelcome();
     input.focus();
@@ -704,11 +722,9 @@
 
   // --- Add message ---
   function addMessage(role, content, sources) {
-    // Remove welcome + suggestions if present
+    // Remove welcome if present
     var welcome = messages.querySelector(".soma-welcome");
     if (welcome) welcome.remove();
-    var sugg = messages.querySelector(".soma-suggestions");
-    if (sugg) sugg.remove();
 
     // Show reset button
     resetBtn.style.display = "flex";

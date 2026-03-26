@@ -484,7 +484,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
                     {/* Copy button */}
                     <button
                       onClick={handleCopy}
-                      className="absolute right-3 top-10 rounded-md border border-[#2a2a34] bg-[#1a1a24] px-3 py-1.5 text-xs text-[#8b8b9e] transition-colors hover:text-[#f0f0f3]"
+                      className="absolute right-3 top-10 rounded-lg bg-[#3b82f6] px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90"
                     >
                       {copied ? "Copié !" : "Copier"}
                     </button>
@@ -509,7 +509,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
 
           {/* Empty state */}
           {state === "idle" && (
-            <div className="flex items-center justify-center py-16 text-sm text-[#3f3f4a]">
+            <div className="flex items-center justify-center py-16 text-sm text-[#8b8b9e]">
               Entrez l&apos;URL de votre site pour commencer
             </div>
           )}
