@@ -1,59 +1,45 @@
-# HANDOFF — Session 36
+# HANDOFF — Session 37F
 
 ## Date: 2026-03-26
 
 ## What was completed
 
-### Session 35A–35K (prior sessions)
-- Full MVP: scraper, chunker, indexer, RAG pipeline, chat API, widget, landing page
-- Web onboarding with SSE terminal
-- Vercel deployment (Qdrant registry, /tmp filesystem)
-- Widget polish (markdown, suggestions, animations)
-- Landing page redesign (IC layout, Manrope font)
-- Lead capture (Supabase)
-- Intelligence layer (site profiling, adaptive thresholds)
-- Aggressive content extraction (JSON-LD, nuclear fallback)
-- Conversion banners
+### Session 37D–37E (prior in this mega-session)
+- CMS-driven content: features, howItWorks, FAQ fetched from Payload CMS REST API
+- Server/client component split (page.tsx → ChatbotPage.tsx)
+- FAQ accordion component with Framer Motion
+- Unified dark sandbox card with integrated URL form
+- Widget suggestions persistence + reset button repositioned
+- Accent color change #C8E6FF → #DDD3F5 (both repos)
+- Upsell section (free vs custom comparison cards)
+- Language prompt fix (single-language free tier)
 
-### Session 36 — Code Review Fixes
-15 issues from post-35K code review, all resolved:
+### Session 37F — Full SEO/AEO
+- `src/app/robots.ts` — allow `/`, disallow `/api/`, link sitemap
+- `src/app/sitemap.ts` — single entry, weekly, priority 1.0
+- `public/llms.txt` — full AI crawler description (product, features, stack, FAQ, links)
+- `src/app/page.tsx` — full metadata (title, description, keywords, authors, OG, Twitter cards, canonical, robots) + 4 JSON-LD schemas (SoftwareApplication, BreadcrumbList, HowTo, FAQPage)
+- `src/app/layout.tsx` — simplified to metadataBase + title template only
 
-**Security (5 fixes)**
-- XSS in widget markdown renderer: `escapeHtml()` + `isSafeUrl()` sanitization
-- XSS in srcDoc iframe: `htmlEncode()` on siteId interpolation
-- `detectPageType()` crash: try-catch on `new URL()`
-- SSRF via pipeline: private IP block (localhost, 10.x, 172.x, 192.168.x, AWS/GCP metadata)
-- Persistent rate limiter: Qdrant-backed `soma_chat_rate_limits` collection (replaces in-memory Map)
+## Files created
+- `src/app/robots.ts`
+- `src/app/sitemap.ts`
+- `public/llms.txt`
 
-**Accessibility (3 fixes)**
-- WCAG AA contrast: `text-[#55556a]` → `text-[#8b8b9e]` (6 occurrences)
-- `aria-label` on URL input
-- `aria-live="polite"` on terminal output
+## Files modified
+- `src/app/page.tsx` — metadata export + 4 JSON-LD script tags
+- `src/app/layout.tsx` — simplified metadata
 
-**Quality & Types (7 fixes)**
-- `res.json()` error wrapped in try-catch (handles 502 HTML responses)
-- Supabase client singleton (lazy `getSupabase()` replaces dynamic import per call)
-- `ScrapedPage.type`: `string` → `'page' | 'blog' | 'product' | 'faq'`
-- `SiteConfig.language` + `SiteRecord.language`: `string` → `'fr' | 'en'`
-- SSE stream error boundary (try-catch around `controller.enqueue`)
-- Widget fetch error logging (`.catch` now logs with `console.warn`)
-- `PipelineEvent` discriminated union type (replaces `any`)
-- siteId format validation (`/^[a-zA-Z0-9_-]+$/`) on chat API
+## Known issues (non-blocking)
+- No OG image set — `twitter.card: 'summary_large_image'` will show text-only card until image added
+- CORS wildcard on API routes (carried from session 36)
 
 ## Deployed
 - Vercel: chatbot.somastudio.xyz
 - GitHub: github.com/soma-studio/soma-chat
 
-## Known issues
-- CORS wildcard on all API routes (any origin can call chat API) — acceptable for free tier
-- Widget size should be monitored (currently ~15 KB, added ~0.5 KB with security helpers)
-
-## Manual steps pending
-1. Run SQL in Supabase to add "soma-chatbot" industry (from session 35I)
-2. Add SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY to Vercel env vars
-3. Redeploy after env var changes
-
 ## Next session should
 1. README.md rewrite (open source documentation, self-hosting guide)
-2. Test pipeline on diverse sites (WordPress, Shopify, static HTML, SPA)
-3. GitHub repo polish (LICENSE, CONTRIBUTING)
+2. Add OG image for social sharing
+3. Test pipeline on diverse sites (WordPress, Shopify, static HTML, SPA)
+4. GitHub repo polish (LICENSE, CONTRIBUTING)

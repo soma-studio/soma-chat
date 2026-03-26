@@ -196,6 +196,57 @@ Post-35K code review identified 15 issues across security, accessibility, and co
 
 ---
 
+## Session 37D–37F — 26 mars 2026 — CMS Content + UI Polish + SEO/AEO
+
+### Context
+Multi-step session spanning somastudio-site and soma-chat. Focused on making the landing page CMS-driven, polishing UI (unified dark card, widget suggestions, accent color), and adding full SEO/AEO signals.
+
+### 37D — CMS-Driven Content
+- Split `page.tsx` into thin server component + `ChatbotPage.tsx` client component
+- Created `src/lib/cms-data.ts`: types, fallback data, `fetchServiceData()` fetching from Payload CMS REST API (`https://somastudio.xyz/api/services`)
+- ISR with 1-hour revalidation + 10s abort timeout
+- URL-encoded query params (`%5B`/`%5D`) for Vercel compatibility
+- Created `src/components/FAQ.tsx`: accordion with Framer Motion AnimatePresence
+
+### 37E — UI Polish
+- Unified dark sandbox card (form + terminal + preview in one `rounded-2xl` card)
+- Widget suggestions persist after clicking (individual pill removal)
+- Reset button repositioned below input as "Nouvelle conversation"
+- Accent color change `#C8E6FF` → `#DDD3F5` (both repos)
+- Upsell section: free vs custom comparison cards (light theme)
+- Language prompt fix: single-language is free tier, multilingual is upsell
+
+### 37F — Full SEO/AEO
+- `src/app/robots.ts` — standard robots.txt (allow `/`, disallow `/api/`)
+- `src/app/sitemap.ts` — single entry, weekly, priority 1.0
+- `public/llms.txt` — complete AI crawler description
+- `src/app/page.tsx` — full Metadata export + 4 JSON-LD schemas:
+  - SoftwareApplication (product info, free offer, MIT license)
+  - BreadcrumbList (SOMA Studio → Nos services → Chatbot IA)
+  - HowTo (dynamic from CMS howItWorks)
+  - FAQPage (dynamic from CMS faq)
+- `src/app/layout.tsx` — simplified to metadataBase + title template
+
+### Files created/modified
+
+| File | Change |
+|------|--------|
+| `src/app/page.tsx` | Full metadata + 4 JSON-LD schemas |
+| `src/app/layout.tsx` | Simplified to metadataBase + title template |
+| `src/app/robots.ts` | **NEW** — robots.txt |
+| `src/app/sitemap.ts` | **NEW** — sitemap.xml |
+| `public/llms.txt` | **NEW** — AI crawler description |
+| `src/lib/cms-data.ts` | **NEW** (37D) — CMS fetch + fallbacks |
+| `src/components/ChatbotPage.tsx` | **NEW** (37D) — client component |
+| `src/components/FAQ.tsx` | **NEW** (37D) — accordion |
+| `src/app/globals.css` | Accent color #DDD3F5 (37E) |
+| `public/widget.js` | Suggestions persistence, footer, reset (37E) |
+
+### Commits
+- `0ed19ba` — feat: full SEO/AEO — robots, sitemap, llms.txt, 4 JSON-LD schemas, OpenGraph, Twitter cards, canonical
+
+---
+
 ## Progression
 
 | Session | Scope | Status |
@@ -213,4 +264,5 @@ Post-35K code review identified 15 issues across security, accessibility, and co
 | 35J | Intelligence layer (site profiling) | ✅ |
 | 35K | Scraper fix + JSON-LD + banners | ✅ |
 | 36 | Code review fixes (security + a11y + types) | ✅ |
-| 37 | README + GitHub polish + diverse site testing | ⬜ |
+| 37D-37F | CMS content + UI polish + SEO/AEO | ✅ |
+| 38 | README + GitHub polish + diverse site testing | ⬜ |
