@@ -83,11 +83,12 @@ export const FALLBACK_FAQ: CMSFaqItem[] = [
 const PAYLOAD_API_URL = 'https://somastudio.xyz/api/services'
 
 export async function fetchServiceData(): Promise<CMSServiceData> {
+  const url = `${PAYLOAD_API_URL}?where%5Bslug%5D%5Bequals%5D=chatbot-ia&depth=1`
   try {
-    const res = await fetch(
-      `${PAYLOAD_API_URL}?where[slug][equals]=chatbot-ia&depth=1`,
-      { next: { revalidate: 3600 } },
-    )
+    const res = await fetch(url, {
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(10000),
+    })
 
     if (!res.ok) throw new Error(`API returned ${res.status}`)
 
