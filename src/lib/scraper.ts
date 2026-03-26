@@ -211,8 +211,66 @@ function detectPageType(url: string): string {
   return "page";
 }
 
+// --- JSON-LD extraction ---
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function flattenJsonLd(data: any, depth: number = 0): string {
+  if (depth > 3) return "";
+  if (!data || typeof data !== "object") return "";
+
+  const lines: string[] = [];
+  const type = data["@type"];
+
+  // Skip non-content schemas
+  const SKIP_TYPES = ["BreadcrumbList", "WebSite", "WebPage", "SiteNavigationElement", "SearchAction", "Organization"];
+  if (type && (Array.isArray(type) ? type.every((t: string) => SKIP_TYPES.includes(t)) : SKIP_TYPES.includes(type))) {
+    return "";
+  }
+
+  if (type) lines.push(`\n## ${Array.isArray(type) ? type.join(" / ") : type}\n`);
+
+  for (const key of Object.keys(data)) {
+    if (key.startsWith("@")) continue;
+    const val = data[key];
+
+    if (typeof val === "string" && val.length > 0 && val.length < 500) {
+      lines.push(`${key}: ${val}`);
+    } else if (typeof val === "number" || typeof val === "boolean") {
+      lines.push(`${key}: ${val}`);
+    } else if (Array.isArray(val)) {
+      const items = val
+        .map((item) => {
+          if (typeof item === "string") return item;
+          if (typeof item === "object" && item.name) return item.name;
+          if (typeof item === "object") return flattenJsonLd(item, depth + 1);
+          return "";
+        })
+        .filter(Boolean);
+      if (items.length > 0) lines.push(`${key}: ${items.join(", ")}`);
+    } else if (typeof val === "object" && val !== null) {
+      const nested = flattenJsonLd(val, depth + 1);
+      if (nested) lines.push(nested);
+    }
+  }
+
+  return lines.join("\n");
+}
+
 // --- Content extraction ---
 function extractContent($: cheerio.CheerioAPI): string {
+  // Extract JSON-LD structured data BEFORE removing scripts
+  const jsonLdTexts: string[] = [];
+  $('script[type="application/ld+json"]').each((_i, el) => {
+    try {
+      const raw = $(el).html();
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      const extracted = flattenJsonLd(data);
+      if (extracted.trim()) jsonLdTexts.push(extracted);
+    } catch {
+      // Invalid JSON-LD — skip
+    }
+  });
+
   $(NOISE_SELECTORS).remove();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -278,7 +336,7 @@ function extractContent($: cheerio.CheerioAPI): string {
     }
   });
 
-  const result = lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  let result = lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 
   // Fallback: if structured extraction yields < 200 chars, extract all leaf text
   if (result.length < 200 && $content) {
@@ -303,7 +361,46 @@ function extractContent($: cheerio.CheerioAPI): string {
     });
 
     const fallback = fallbackLines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
-    if (fallback.length > result.length * 1.5) return fallback;
+    if (fallback.length > result.length * 1.5) result = fallback;
+  }
+
+  // Nuclear fallback: walk every text node when still < 300 chars
+  if (result.length < 300 && $content) {
+    const allTexts: string[] = [];
+
+    $content.find("*").contents().each(function () {
+      if (this.type === "text") {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const text = (this as any).data?.replace(/\s+/g, " ").trim();
+        if (text && text.length > 2) {
+          allTexts.push(text);
+        }
+      }
+    });
+
+    // Deduplicate (Webflow often has duplicate text in mobile/desktop variants)
+    const seen = new Set<string>();
+    const uniqueTexts = allTexts.filter((t) => {
+      const normalized = t.toLowerCase().trim();
+      if (seen.has(normalized)) return false;
+      if (normalized.length < 3) return false;
+      seen.add(normalized);
+      return true;
+    });
+
+    const nuclearResult = uniqueTexts.join("\n");
+    if (nuclearResult.length > result.length * 1.5) {
+      result = nuclearResult;
+    }
+  }
+
+  // Combine JSON-LD structured data + extracted text
+  const jsonLdSection = jsonLdTexts.length > 0 ? jsonLdTexts.join("\n") : "";
+
+  if (jsonLdSection && result) {
+    return (result + "\n\n--- Données structurées ---\n" + jsonLdSection).replace(/\n{3,}/g, "\n\n").trim();
+  } else if (jsonLdSection) {
+    return jsonLdSection.trim();
   }
 
   return result;

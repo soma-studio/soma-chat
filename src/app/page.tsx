@@ -498,6 +498,45 @@ export default function Home() {
                   </div>
                 </div>
               )}
+
+              {/* Conversion banners */}
+              {state === "complete" && completeData && (
+                <>
+                  {completeData.chunksIndexed < 20 && (
+                    <div className="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/5 px-5 py-4">
+                      <p className="text-sm text-[#a0a0b0] leading-relaxed">
+                        <span className="text-amber-400 font-medium">Résultats limités ?</span>{" "}
+                        Si votre chatbot manque d&apos;informations, c&apos;est probablement que votre site
+                        n&apos;est pas optimisé pour la lecture par les bots IA — ce qui signifie
+                        qu&apos;il ne ressort pas non plus dans les résultats de ChatGPT, Gemini ou
+                        Perplexity.{" "}
+                        <a
+                          href="https://somastudio.xyz/nos-services/site-ia-ready"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-400 hover:text-blue-300 underline"
+                        >
+                          Optimiser mon SEO &amp; AEO →
+                        </a>
+                      </p>
+                    </div>
+                  )}
+                  <div className="mt-3 rounded-lg border border-[#1f1f28] bg-[#0d0d14] px-5 py-4">
+                    <p className="text-sm text-[#8b8b9e] leading-relaxed">
+                      Vous souhaitez personnaliser le ton, connecter vos documents internes, ou
+                      étendre les capacités de votre chatbot ?{" "}
+                      <a
+                        href="https://somastudio.xyz/nos-services/assistant-ia-rag"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 hover:text-blue-300 underline"
+                      >
+                        Découvrir notre offre sur mesure →
+                      </a>
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
