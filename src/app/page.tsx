@@ -242,94 +242,82 @@ export default function Home() {
   };
 
   return (
-    <>
-      {/* Section 1: Hero */}
-      <section className="pt-[60px] pb-[var(--spacing-section)] max-[991px]:pt-6 max-[991px]:pb-[var(--spacing-section-mobile)]">
-        <div className="mx-auto max-w-[var(--container-max)] px-[var(--spacing-container)]">
-          <h1 className="text-[56px] font-semibold text-[#000] max-[767px]:text-[38px]">
-            Chatbot IA gratuit
-          </h1>
-          <p className="mt-4 max-w-[600px] text-[17px] text-[#717171]">
-            Un assistant IA pour votre site web, entra&icirc;n&eacute; sur votre contenu
-            public. Pr&ecirc;t en 5 minutes.
-          </p>
-        </div>
-      </section>
+    <article className="py-[var(--spacing-section)] max-[991px]:py-[var(--spacing-section-mobile)]">
+      <div className="mx-auto max-w-[var(--container-max)] px-[var(--spacing-container)]">
 
-      {/* Section 2: Features + Price sidebar */}
-      <section className="pb-[var(--spacing-section)] max-[991px]:pb-[var(--spacing-section-mobile)]">
-        <div className="mx-auto max-w-[var(--container-max)] px-[var(--spacing-container)]">
-          <div className="grid grid-cols-1 gap-12 min-[992px]:grid-cols-[1fr_280px]">
-            {/* Features */}
-            <div>
-              <h2 className="text-[24px] font-medium text-[#000]">Fonctionnalit&eacute;s</h2>
-              <ul className="mt-6 space-y-3">
-                {features.map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-start gap-3 text-[17px] text-[#333]"
-                  >
-                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#C8E6FF]" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
+        {/* Hero */}
+        <h1 className="text-h1 font-semibold max-[767px]:text-h2">
+          Chatbot IA gratuit
+        </h1>
+        <p className="mt-4 max-w-[600px] text-body text-gray">
+          Un assistant IA pour votre site web, entra&icirc;n&eacute; sur votre contenu
+          public. Pr&ecirc;t en 5 minutes.
+        </p>
 
-            {/* Price sidebar */}
-            <div className="self-start rounded-[4px] border border-[#d9d9d9] bg-white p-8 text-center">
-              <p className="text-[13px] font-medium uppercase tracking-wider text-[#717171]">
-                Tarif
-              </p>
-              <p className="mt-2 text-[24px] font-semibold text-[#22c55e]">
-                Gratuit
-              </p>
-              <p className="mt-1 text-[13px] text-[#717171]">
-                10 pages &middot; Open source
-              </p>
-              <a
-                href="#sandbox"
-                className="mt-6 inline-block w-full rounded-[100px] bg-[#0e1527] px-5 py-2.5 text-[13px] font-normal text-white transition-all duration-300 hover:bg-[#19284c]"
-              >
-                Cr&eacute;er mon chatbot
-              </a>
-            </div>
+        {/* Features + Price sidebar */}
+        <div className="mt-12 grid grid-cols-1 gap-12 min-[992px]:grid-cols-[1fr_auto]">
+          <div>
+            <h2 className="text-h3 font-medium">Fonctionnalit&eacute;s</h2>
+            <ul className="mt-6 space-y-3">
+              {features.map((feature) => (
+                <li
+                  key={feature}
+                  className="flex items-start gap-3 text-body text-body-text"
+                >
+                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#C8E6FF]" />
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="self-start rounded-[var(--radius-default)] border border-border bg-white p-8 text-center min-[992px]:w-[280px]">
+            <p className="text-sm font-medium uppercase tracking-wider text-gray">
+              Tarif
+            </p>
+            <p className="mt-2 text-h3 font-semibold text-[#22c55e]">
+              Gratuit
+            </p>
+            <p className="mt-1 text-sm text-gray">
+              10 pages &middot; Open source
+            </p>
+            <a
+              href="#sandbox"
+              className="mt-6 inline-block w-full rounded-[var(--radius-pill)] bg-dark px-5 py-2.5 text-sm font-normal text-white transition-all duration-300 hover:bg-button-hover"
+            >
+              Cr&eacute;er mon chatbot
+            </a>
           </div>
         </div>
-      </section>
 
-      {/* Section 3: How it works */}
-      <section className="border-t border-[#d9d9d9] py-[var(--spacing-section)] max-[991px]:py-[var(--spacing-section-mobile)]">
-        <div className="mx-auto max-w-[var(--container-max)] px-[var(--spacing-container)]">
-          <h2 className="mb-10 text-[24px] font-medium text-[#000]">
-            Comment &ccedil;a marche
+        {/* How it works */}
+        <div className="mt-20">
+          <h2 className="text-h3 font-medium">
+            Comment &ccedil;a fonctionne
           </h2>
-          <div className="grid grid-cols-1 gap-8 min-[992px]:grid-cols-3">
+          <div className="mt-10 grid grid-cols-1 gap-8 min-[992px]:grid-cols-2">
             {steps.map((step, i) => (
-              <div key={i}>
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[#C8E6FF] text-[15px] font-bold text-[#0e1527]">
-                  {String(i + 1).padStart(2, "0")}
+              <div key={i} className="flex items-start gap-5">
+                <span
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-dark"
+                  style={{ backgroundColor: '#C8E6FF' }}
+                >
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <h3 className="font-medium text-title-text">{step.title}</h3>
+                  <p className="mt-2 text-body leading-relaxed text-gray">
+                    {step.desc}
+                  </p>
                 </div>
-                <h3 className="mb-2 font-medium text-[#000]">
-                  {step.title}
-                </h3>
-                <p className="text-[15px] leading-relaxed text-[#717171]">
-                  {step.desc}
-                </p>
               </div>
             ))}
           </div>
         </div>
-      </section>
 
-      {/* Section 4: Sandbox */}
-      <section id="sandbox" className="border-t border-[#d9d9d9] py-[var(--spacing-section)] max-[991px]:py-[var(--spacing-section-mobile)]">
-        <div className="mx-auto max-w-[var(--container-max)] px-[var(--spacing-container)]">
-          <h2 className="mb-6 text-[24px] font-medium text-[#000]">
-            Essayer maintenant
-          </h2>
-
-          {/* URL Form — light theme */}
+        {/* Sandbox */}
+        <div id="sandbox" className="mt-8">
+          {/* URL Form */}
           <form onSubmit={handleSubmit} className="flex w-full max-w-lg gap-3">
             <input
               type="text"
@@ -338,23 +326,23 @@ export default function Home() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               disabled={state === "running"}
-              className="flex-1 rounded-[4px] border border-[#d9d9d9] bg-white px-4 py-3 text-[15px] text-[#333] placeholder-[#999] outline-none transition-colors focus:border-[#0e1527] disabled:opacity-50"
+              className="flex-1 rounded-[var(--radius-default)] border border-border bg-white px-4 py-3 text-md text-body-text placeholder-[#999] outline-none transition-colors focus:border-dark disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={state === "running" || !url.trim()}
-              className="rounded-[4px] bg-[#0e1527] px-5 py-3 text-[13px] font-medium text-white transition-colors hover:bg-[#19284c] disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-[var(--radius-default)] bg-dark px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-button-hover disabled:cursor-not-allowed disabled:opacity-50"
             >
               {state === "running" ? "En cours..." : "Cr\u00e9er"}
             </button>
           </form>
-          <p className="mt-2 text-[13px] text-[#717171]">
+          <p className="mt-2 text-sm text-gray">
             10 pages max (free tier) &mdash; Aucune carte requise.
           </p>
 
           {/* Terminal + Preview + Snippet — dark island */}
           {(state === "running" || state === "complete") && (
-            <div className="mt-8 overflow-hidden rounded-[4px] border border-[#1f1f28] bg-[#0a0a0f]">
+            <div className="mt-8 overflow-hidden rounded-[var(--radius-default)] border border-[#1f1f28] bg-[#0a0a0f]">
               {/* Terminal window */}
               <div>
                 {/* VSCode-style tab bar */}
@@ -524,7 +512,7 @@ export default function Home() {
 
               {/* Conversion banners */}
               {state === "complete" && completeData && (
-                <div className="border-t border-[#1f1f28] p-4 space-y-3">
+                <div className="space-y-3 border-t border-[#1f1f28] p-4">
                   {completeData.chunksIndexed < 20 && (
                     <div className="rounded-[4px] border border-amber-500/20 bg-amber-500/5 px-5 py-4">
                       <p className="text-sm leading-relaxed text-[#a0a0b0]">
@@ -563,26 +551,26 @@ export default function Home() {
             </div>
           )}
         </div>
-      </section>
 
-      {/* Section 5: Bottom CTA */}
-      <section className="border-t border-[#d9d9d9] py-[var(--spacing-section)] max-[991px]:py-[var(--spacing-section-mobile)]">
-        <div className="mx-auto max-w-[var(--container-max)] px-[var(--spacing-container)] text-center">
-          <h2 className="text-[24px] font-medium text-[#000]">
-            Besoin de plus de 10 pages ?
+        {/* Bottom CTA */}
+        <div className="mt-16 text-center">
+          <h2 className="text-h3 font-medium">
+            Int&eacute;ress&eacute; par cette offre ?
           </h2>
-          <p className="mt-3 text-[17px] text-[#717171]">
-            Nous construisons des assistants IA sur mesure, connect&eacute;s &agrave; vos
-            documents internes.
+          <p className="mt-3 text-body text-gray">
+            Discutons de votre projet — premier &eacute;change sans engagement.
           </p>
           <a
-            href="https://somastudio.xyz/contact"
-            className="mt-6 inline-block rounded-[100px] border border-[#d9d9d9] bg-white px-5 py-2.5 text-[13px] font-normal text-[#000] transition-all duration-300 hover:bg-[#0e1527] hover:text-white"
+            href="https://calendly.com/hello-somastudio/30min"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-block rounded-[var(--radius-pill)] bg-dark px-5 py-2.5 text-sm font-normal text-white transition-all duration-300 hover:bg-button-hover"
           >
-            Discuter de votre projet
+            R&eacute;server un cr&eacute;neau
           </a>
         </div>
-      </section>
-    </>
+
+      </div>
+    </article>
   );
 }

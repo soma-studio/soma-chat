@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { useScrollDirection } from '@/hooks/useScrollDirection'
 
 const SITE_URL = 'https://somastudio.xyz'
 
@@ -20,7 +19,6 @@ const CALENDLY_URL = 'https://calendly.com/hello-somastudio/30min'
 const ACTIVE_INDEX = 1
 
 export function Navbar() {
-  const scrollDirection = useScrollDirection()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
@@ -36,13 +34,7 @@ export function Navbar() {
 
   return (
     <>
-      <header
-        className={`fixed left-0 right-0 top-0 z-[9999] transition-all duration-300 ${
-          scrollDirection === 'down' && !isMobileMenuOpen
-            ? '-translate-y-full'
-            : 'translate-y-0'
-        }`}
-      >
+      <header className="relative z-[9999]">
         <div className="mx-auto px-4">
           <nav
             className={`mx-auto mt-4 flex w-fit items-center gap-8 rounded-[100px] px-6 py-3 transition-all duration-300 ${
@@ -159,9 +151,6 @@ export function Navbar() {
           </div>
         </div>
       )}
-
-      {/* Spacer for fixed navbar */}
-      <div className="h-24" aria-hidden="true" />
     </>
   )
 }
