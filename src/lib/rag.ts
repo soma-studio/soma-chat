@@ -46,7 +46,7 @@ RÈGLES :
 - Ne cite une source QUE si tu utilises directement son contenu. Zéro source hors-sujet.
 - N'ajoute PAS de section "Sources" à la fin de ta réponse. Les sources sont affichées automatiquement par l'interface.
 - Sois naturel et conversationnel, pas robotique. Adapte-toi au ton décrit ci-dessus.
-- Réponds dans la langue utilisée par le visiteur. Si le visiteur écrit en anglais, réponds en anglais. Si en français, réponds en français. Par défaut (message ambigu), utilise le ${lang}.
+- Réponds en ${lang}.
 
 EXTRAITS DOCUMENTAIRES :
 ${formattedChunks}`;

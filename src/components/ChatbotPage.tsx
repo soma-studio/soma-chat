@@ -495,55 +495,121 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
                 </div>
               )}
 
-              {/* Conversion banners */}
-              {state === "complete" && completeData && (
-                <div className="space-y-3 border-t border-[#1f1f28] p-4">
-                  {completeData.chunksIndexed < 20 && (
-                    <div className="rounded-[4px] border border-amber-500/20 bg-amber-500/5 px-5 py-4">
-                      <p className="text-sm leading-relaxed text-[#a0a0b0]">
-                        <span className="font-medium text-amber-400">R&eacute;sultats limit&eacute;s ?</span>{" "}
-                        Si votre chatbot manque d&apos;informations, c&apos;est probablement que votre site
-                        n&apos;est pas optimis&eacute; pour la lecture par les bots IA — ce qui signifie
-                        qu&apos;il ne ressort pas non plus dans les r&eacute;sultats de ChatGPT, Gemini ou
-                        Perplexity.{" "}
-                        <a
-                          href="https://somastudio.xyz/nos-services/site-ia-ready"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-400 underline hover:text-blue-300"
-                        >
-                          Optimiser mon SEO &amp; AEO &rarr;
-                        </a>
-                      </p>
-                    </div>
-                  )}
-                  <div className="rounded-[4px] border border-[#1f1f28] bg-[#0d0d14] px-5 py-4">
-                    <p className="text-sm leading-relaxed text-[#8b8b9e]">
-                      Vous souhaitez personnaliser le ton, connecter vos documents internes, ou
-                      &eacute;tendre les capacit&eacute;s de votre chatbot ?{" "}
-                      <a
-                        href="https://somastudio.xyz/nos-services/assistant-ia-rag"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-400 underline hover:text-blue-300"
-                      >
-                        D&eacute;couvrir notre offre sur mesure &rarr;
-                      </a>
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-16 text-center">
-          <h2 className="text-h3 font-medium">
-            Int&eacute;ress&eacute; par cette offre ?
+        {/* Upsell: Free vs Custom comparison */}
+        <div className="mt-20">
+          <h2 className="text-h3 font-medium text-title-text">
+            Aller plus loin
           </h2>
           <p className="mt-3 text-body text-gray">
-            Discutons de votre projet — premier &eacute;change sans engagement.
+            Ce chatbot gratuit est id&eacute;al pour tester la technologie RAG sur votre site.
+            Pour un assistant qui r&eacute;pond vraiment &agrave; vos enjeux m&eacute;tier, voici ce que nous proposons.
+          </p>
+
+          {/* Comparison grid */}
+          <div className="mt-10 grid grid-cols-1 gap-6 min-[992px]:grid-cols-2">
+
+            {/* Free tier card */}
+            <div className="rounded-[var(--radius-default)] border border-border bg-white p-8">
+              <div className="flex items-center gap-3">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#C8E6FF] text-sm font-semibold text-dark">
+                  &#10003;
+                </span>
+                <h3 className="text-body font-semibold text-title-text">
+                  Chatbot gratuit
+                </h3>
+              </div>
+              <p className="mt-1 text-sm text-gray">Ce que vous avez maintenant</p>
+              <ul className="mt-6 space-y-3">
+                <li className="flex items-start gap-3 text-md text-body-text">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-border" />
+                  10 pages index&eacute;es maximum
+                </li>
+                <li className="flex items-start gap-3 text-md text-body-text">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-border" />
+                  Contenu public uniquement
+                </li>
+                <li className="flex items-start gap-3 text-md text-body-text">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-border" />
+                  R&eacute;ponses dans la langue du site
+                </li>
+                <li className="flex items-start gap-3 text-md text-body-text">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-border" />
+                  Widget standard avec branding SOMA
+                </li>
+                <li className="flex items-start gap-3 text-md text-body-text">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-border" />
+                  Refresh manuel du contenu
+                </li>
+              </ul>
+            </div>
+
+            {/* Custom tier card */}
+            <div className="rounded-[var(--radius-default)] border-2 border-dark bg-white p-8">
+              <div className="flex items-center gap-3">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-dark text-sm font-semibold text-white">
+                  &#9733;
+                </span>
+                <h3 className="text-body font-semibold text-title-text">
+                  Chatbot sur mesure
+                </h3>
+              </div>
+              <p className="mt-1 text-sm text-gray">&Agrave; partir de 1&nbsp;800&nbsp;&euro;</p>
+              <ul className="mt-6 space-y-3">
+                <li className="flex items-start gap-3 text-md text-body-text">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-dark" />
+                  Pages illimit&eacute;es — tout votre site index&eacute;
+                </li>
+                <li className="flex items-start gap-3 text-md text-body-text">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-dark" />
+                  Documents internes (PDF, Word, bases de connaissances)
+                </li>
+                <li className="flex items-start gap-3 text-md text-body-text">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-dark" />
+                  Support multilingue — r&eacute;ponses dans la langue du visiteur
+                </li>
+                <li className="flex items-start gap-3 text-md text-body-text">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-dark" />
+                  Personnalisation du ton, de la personnalit&eacute; et du p&eacute;rim&egrave;tre
+                </li>
+                <li className="flex items-start gap-3 text-md text-body-text">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-dark" />
+                  Widget white-label sans branding
+                </li>
+                <li className="flex items-start gap-3 text-md text-body-text">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-dark" />
+                  Refresh automatique du contenu (hebdomadaire)
+                </li>
+                <li className="flex items-start gap-3 text-md text-body-text">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-dark" />
+                  D&eacute;ploiement on-premise possible
+                </li>
+                <li className="flex items-start gap-3 text-md text-body-text">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-dark" />
+                  Analytics et suivi des conversations
+                </li>
+              </ul>
+              <a
+                href="https://somastudio.xyz/nos-services/assistant-ia-rag"
+                className="mt-8 inline-block w-full rounded-[var(--radius-pill)] bg-dark px-5 py-2.5 text-center text-sm font-normal text-white transition-all duration-300 hover:bg-button-hover"
+              >
+                D&eacute;couvrir l&apos;offre sur mesure
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="mt-16 text-center">
+          <h2 className="text-h3 font-medium text-title-text">
+            Une question sur nos offres ?
+          </h2>
+          <p className="mt-3 text-body text-gray">
+            Premier &eacute;change sans engagement — on vous explique ce qui est possible pour votre cas.
           </p>
           <a
             href="https://calendly.com/hello-somastudio/30min"
