@@ -152,6 +152,50 @@ Multi-step session: redesign landing page to match somastudio.xyz service layout
 
 ---
 
+## Session 36 — 26 mars 2026 — Code Review Fixes (Security + Quality + A11y)
+
+### Context
+Post-35K code review identified 15 issues across security, accessibility, and code quality. All fixed in one session.
+
+### Security fixes
+- **XSS in widget markdown renderer**: Added `escapeHtml()` + `isSafeUrl()` helpers. Content escaped BEFORE inline formatting, only generated tags survive. Links validated against `http:`, `https:`, `mailto:` protocols.
+- **XSS in srcDoc iframe**: `htmlEncode()` on `completeData.siteId` in iframe interpolation. Snippet siteId sanitized with alphanumeric filter.
+- **detectPageType crash**: Wrapped `new URL(url)` in try-catch, defaults to `'page'`.
+- **SSRF protection**: Pipeline route blocks non-HTTP protocols and private/internal IPs (localhost, RFC 1918 ranges, AWS/GCP metadata endpoints).
+- **Persistent rate limiter**: Replaced in-memory `Map` (reset on Vercel cold start) with Qdrant-backed `soma_chat_rate_limits` collection. Fail-open on errors. Added siteId format validation.
+
+### Accessibility fixes
+- WCAG AA contrast: `text-[#55556a]` → `text-[#8b8b9e]` (6 occurrences, placeholder kept)
+- `aria-label="URL de votre site web"` on URL input
+- `aria-live="polite"` + `aria-label="Progression du pipeline"` on terminal output
+
+### Quality & type safety fixes
+- `res.json()` error parsing wrapped in try-catch (handles 502 HTML responses)
+- Supabase client: lazy singleton `getSupabase()` replaces dynamic import per call
+- `ScrapedPage.type`: `string` → `'page' | 'blog' | 'product' | 'faq'` union
+- `SiteConfig.language` + `SiteRecord.language`: `string` → `'fr' | 'en'` union
+- SSE stream: try-catch around `controller.enqueue` for client disconnection
+- Widget fetch: `.catch(function () {})` → `console.warn` logging
+- `PipelineEvent` discriminated union type replaces `any` in handleEvent
+
+### Files created/modified
+
+| File | Change |
+|------|--------|
+| `public/widget.js` | escapeHtml, isSafeUrl, content sanitization, fetch error logging |
+| `src/app/page.tsx` | htmlEncode, PipelineEvent type, a11y attrs, contrast fix, res.json try-catch |
+| `src/app/api/chat/route.ts` | Import Qdrant rate limiter, siteId validation, remove in-memory Map |
+| `src/app/api/pipeline/route.ts` | SSRF protection, SSE error boundary |
+| `src/lib/rate-limiter.ts` | **NEW** — Qdrant-backed rate limiter |
+| `src/lib/lead-capture.ts` | Supabase singleton pattern |
+| `src/lib/scraper.ts` | detectPageType try-catch, return type |
+| `src/types/index.ts` | Union types for ScrapedPage.type, SiteConfig.language, SiteRecord.language |
+
+### Commits
+- `d5615b9` — fix: security (XSS, SSRF, rate limiter) + a11y + type safety
+
+---
+
 ## Progression
 
 | Session | Scope | Status |
@@ -168,5 +212,5 @@ Multi-step session: redesign landing page to match somastudio.xyz service layout
 | 35I | Lead capture (Supabase) | ✅ |
 | 35J | Intelligence layer (site profiling) | ✅ |
 | 35K | Scraper fix + JSON-LD + banners | ✅ |
-| 36 | Code review fixes + README | ⬜ |
-| 37 | Persistent rate limiting + testing | ⬜ |
+| 36 | Code review fixes (security + a11y + types) | ✅ |
+| 37 | README + GitHub polish + diverse site testing | ⬜ |
