@@ -1,19 +1,58 @@
 @import "tailwindcss";
 
-:root {
-  --background: #0a0a0f;
-  --foreground: #f0f0f3;
+@theme {
+  /* Colors — Core (matches somastudio.xyz) */
+  --color-page-bg: #f9f9f9;
+  --color-primary: #C8E6FF;
+  --color-dark: #0e1527;
+  --color-body-text: #333333;
+  --color-title-text: #000000;
+  --color-white: #ffffff;
+  --color-gray: #717171;
+  --color-button-hover: #19284c;
+  --color-border: #d9d9d9;
+
+  /* Font Families */
+  --font-manrope: "Manrope", sans-serif;
+
+  /* Font Sizes */
+  --text-h1: 56px;
+  --text-h2: 38px;
+  --text-h3: 24px;
+  --text-body: 17px;
+  --text-md: 15px;
+  --text-sm: 13px;
+
+  /* Spacing */
+  --spacing-section: 100px;
+  --spacing-section-mobile: 56px;
+  --spacing-container: 40px;
+
+  /* Container */
+  --container-max: 1100px;
+
+  /* Border Radius */
+  --radius-default: 4px;
+  --radius-pill: 100px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-manrope);
-  --font-mono: var(--font-geist-mono);
+:root {
+  --text-h1: 56px;
+  --text-h2: 38px;
+  --text-h3: 24px;
+  --text-body: 17px;
+  --text-md: 15px;
+  --text-sm: 13px;
+  --spacing-section: 100px;
+  --spacing-section-mobile: 56px;
+  --spacing-container: 40px;
+  --container-max: 1100px;
+  --radius-default: 4px;
+  --radius-pill: 100px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: #f9f9f9;
+  color: #333333;
   font-family: var(--font-manrope), -apple-system, BlinkMacSystemFont, sans-serif;
 }

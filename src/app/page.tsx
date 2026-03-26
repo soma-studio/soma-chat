@@ -242,37 +242,34 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col">
       {/* Section 1: Hero */}
-      <section className="pt-24 pb-12 max-[767px]:pt-16 max-[767px]:pb-8">
-        <div className="mx-auto max-w-[940px] px-6">
-          <h1 className="text-5xl font-semibold tracking-tight max-[767px]:text-3xl">
-            SOMA{" "}
-            <span className="bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">
-              Chat
-            </span>
+      <section className="pt-[60px] pb-[var(--spacing-section)] max-[991px]:pt-6 max-[991px]:pb-[var(--spacing-section-mobile)]">
+        <div className="mx-auto max-w-[var(--container-max)] px-[var(--spacing-container)]">
+          <h1 className="text-[56px] font-semibold text-[#000] max-[767px]:text-[38px]">
+            Chatbot IA gratuit
           </h1>
-          <p className="mt-4 max-w-[600px] text-lg text-[#8b8b9e]">
-            Un assistant IA pour votre site web, entraîné sur votre contenu
-            public. Gratuit, open source, prêt en 5 minutes.
+          <p className="mt-4 max-w-[600px] text-[17px] text-[#717171]">
+            Un assistant IA pour votre site web, entra&icirc;n&eacute; sur votre contenu
+            public. Pr&ecirc;t en 5 minutes.
           </p>
         </div>
       </section>
 
       {/* Section 2: Features + Price sidebar */}
-      <section className="pb-16">
-        <div className="mx-auto max-w-[940px] px-6">
-          <div className="grid grid-cols-1 gap-12 min-[768px]:grid-cols-[1fr_280px]">
+      <section className="pb-[var(--spacing-section)] max-[991px]:pb-[var(--spacing-section-mobile)]">
+        <div className="mx-auto max-w-[var(--container-max)] px-[var(--spacing-container)]">
+          <div className="grid grid-cols-1 gap-12 min-[992px]:grid-cols-[1fr_280px]">
             {/* Features */}
             <div>
-              <h2 className="text-2xl font-medium">Fonctionnalités</h2>
+              <h2 className="text-[24px] font-medium text-[#000]">Fonctionnalit&eacute;s</h2>
               <ul className="mt-6 space-y-3">
                 {features.map((feature) => (
                   <li
                     key={feature}
-                    className="flex items-start gap-3 text-[15px] text-[#a0a0b0]"
+                    className="flex items-start gap-3 text-[17px] text-[#333]"
                   >
-                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-blue-500" />
+                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#C8E6FF]" />
                     {feature}
                   </li>
                 ))}
@@ -280,21 +277,21 @@ export default function Home() {
             </div>
 
             {/* Price sidebar */}
-            <div className="self-start rounded-xl border border-[#1f1f28] bg-[#111118] p-8 text-center">
-              <p className="text-xs font-medium uppercase tracking-wider text-[#8b8b9e]">
+            <div className="self-start rounded-[4px] border border-[#d9d9d9] bg-white p-8 text-center">
+              <p className="text-[13px] font-medium uppercase tracking-wider text-[#717171]">
                 Tarif
               </p>
-              <p className="mt-2 text-3xl font-semibold text-[#3fb950]">
+              <p className="mt-2 text-[24px] font-semibold text-[#22c55e]">
                 Gratuit
               </p>
-              <p className="mt-1 text-xs text-[#8b8b9e]">
+              <p className="mt-1 text-[13px] text-[#717171]">
                 10 pages &middot; Open source
               </p>
               <a
                 href="#sandbox"
-                className="mt-6 inline-block w-full rounded-full bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-500 transition-colors"
+                className="mt-6 inline-block w-full rounded-[100px] bg-[#0e1527] px-5 py-2.5 text-[13px] font-normal text-white transition-all duration-300 hover:bg-[#19284c]"
               >
-                Créer mon chatbot
+                Cr&eacute;er mon chatbot
               </a>
             </div>
           </div>
@@ -302,19 +299,21 @@ export default function Home() {
       </section>
 
       {/* Section 3: How it works */}
-      <section className="pb-16 border-t border-[#1f1f28] pt-16">
-        <div className="mx-auto max-w-[940px] px-6">
-          <h2 className="text-2xl font-medium mb-10">Comment ça marche</h2>
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+      <section className="border-t border-[#d9d9d9] py-[var(--spacing-section)] max-[991px]:py-[var(--spacing-section-mobile)]">
+        <div className="mx-auto max-w-[var(--container-max)] px-[var(--spacing-container)]">
+          <h2 className="mb-10 text-[24px] font-medium text-[#000]">
+            Comment &ccedil;a marche
+          </h2>
+          <div className="grid grid-cols-1 gap-8 min-[992px]:grid-cols-3">
             {steps.map((step, i) => (
               <div key={i}>
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600/20 text-blue-400 font-bold text-lg">
-                  {i + 1}
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[#C8E6FF] text-[15px] font-bold text-[#0e1527]">
+                  {String(i + 1).padStart(2, "0")}
                 </div>
-                <h3 className="font-medium mb-2 text-[#f0f0f3]">
+                <h3 className="mb-2 font-medium text-[#000]">
                   {step.title}
                 </h3>
-                <p className="text-sm text-[#8b8b9e] leading-relaxed">
+                <p className="text-[15px] leading-relaxed text-[#717171]">
                   {step.desc}
                 </p>
               </div>
@@ -324,11 +323,13 @@ export default function Home() {
       </section>
 
       {/* Section 4: Sandbox */}
-      <section id="sandbox" className="pb-16 border-t border-[#1f1f28] pt-16">
-        <div className="mx-auto max-w-[940px] px-6">
-          <h2 className="text-2xl font-medium mb-6">Essayer maintenant</h2>
+      <section id="sandbox" className="border-t border-[#d9d9d9] py-[var(--spacing-section)] max-[991px]:py-[var(--spacing-section-mobile)]">
+        <div className="mx-auto max-w-[var(--container-max)] px-[var(--spacing-container)]">
+          <h2 className="mb-6 text-[24px] font-medium text-[#000]">
+            Essayer maintenant
+          </h2>
 
-          {/* URL Form — always visible */}
+          {/* URL Form — light theme */}
           <form onSubmit={handleSubmit} className="flex w-full max-w-lg gap-3">
             <input
               type="text"
@@ -337,27 +338,27 @@ export default function Home() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               disabled={state === "running"}
-              className="flex-1 rounded-lg border border-[#2a2a34] bg-[#111118] px-4 py-3 text-sm text-[#f0f0f3] placeholder-[#55556a] outline-none focus:border-blue-500 transition-colors disabled:opacity-50"
+              className="flex-1 rounded-[4px] border border-[#d9d9d9] bg-white px-4 py-3 text-[15px] text-[#333] placeholder-[#999] outline-none transition-colors focus:border-[#0e1527] disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={state === "running" || !url.trim()}
-              className="rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-[4px] bg-[#0e1527] px-5 py-3 text-[13px] font-medium text-white transition-colors hover:bg-[#19284c] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {state === "running" ? "En cours..." : "Créer"}
+              {state === "running" ? "En cours..." : "Cr\u00e9er"}
             </button>
           </form>
-          <p className="mt-2 text-xs text-[#8b8b9e]">
+          <p className="mt-2 text-[13px] text-[#717171]">
             10 pages max (free tier) &mdash; Aucune carte requise.
           </p>
 
-          {/* Terminal + Preview + Snippet — only when running or complete */}
+          {/* Terminal + Preview + Snippet — dark island */}
           {(state === "running" || state === "complete") && (
-            <div className="mt-8">
+            <div className="mt-8 overflow-hidden rounded-[4px] border border-[#1f1f28] bg-[#0a0a0f]">
               {/* Terminal window */}
-              <div className="rounded-lg border border-[#1f1f28] bg-[#0a0a0f] overflow-hidden">
+              <div>
                 {/* VSCode-style tab bar */}
-                <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#1f1f28] bg-[#0d0d14]">
+                <div className="flex items-center justify-between border-b border-[#1f1f28] bg-[#0d0d14] px-3 py-1.5">
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] uppercase tracking-wider text-[#8b8b9e]">
                       Terminal
@@ -374,7 +375,7 @@ export default function Home() {
                   ref={terminalRef}
                   aria-live="polite"
                   aria-label="Progression du pipeline"
-                  className="p-4 font-mono text-xs leading-5 max-h-72 overflow-y-auto"
+                  className="max-h-72 overflow-y-auto p-4 font-mono text-xs leading-5"
                 >
                   {lines.map((line, i) => (
                     <div key={i} style={{ color: line.color || "#f0f0f3" }}>
@@ -382,28 +383,28 @@ export default function Home() {
                     </div>
                   ))}
                   {state === "running" && (
-                    <span className="inline-block w-[2px] h-3.5 bg-[#a0a0b0] animate-pulse" />
+                    <span className="inline-block h-3.5 w-[2px] animate-pulse bg-[#a0a0b0]" />
                   )}
                 </div>
               </div>
 
               {/* Live Preview */}
               {state === "complete" && completeData && (
-                <div className="mt-6">
-                  <div className="flex items-center justify-between mb-3">
+                <div className="border-t border-[#1f1f28] p-4">
+                  <div className="mb-3 flex items-center justify-between">
                     <p className="text-xs uppercase tracking-wider text-[#8b8b9e]">
-                      Aperçu
+                      Aper&ccedil;u
                     </p>
                     <p className="text-[10px] text-[#3f3f4a]">
-                      Les données de votre site sont utilisées en temps réel
+                      Les donn&eacute;es de votre site sont utilis&eacute;es en temps r&eacute;el
                     </p>
                   </div>
                   <div
-                    className="rounded-lg border border-[#1f1f28] bg-[#0a0a0f] overflow-hidden"
+                    className="overflow-hidden rounded-[4px] border border-[#1f1f28] bg-[#0a0a0f]"
                     style={{ height: "480px" }}
                   >
                     <iframe
-                      className="w-full h-full border-0"
+                      className="h-full w-full border-0"
                       srcDoc={`<!DOCTYPE html>
 <html>
 <head>
@@ -424,13 +425,13 @@ export default function Home() {
 
               {/* Stripe-style snippet card */}
               {state === "complete" && completeData && (
-                <div className="mt-6 rounded-xl border border-[#1f1f28] bg-[#111118] overflow-hidden">
+                <div className="border-t border-[#1f1f28]">
                   {/* Header bar */}
-                  <div className="flex items-center justify-between px-5 py-3 bg-[#0d0d14] border-b border-[#1f1f28]">
+                  <div className="flex items-center justify-between border-b border-[#1f1f28] bg-[#0d0d14] px-5 py-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="inline-block w-2 h-2 rounded-full bg-[#3fb950]" />
+                      <span className="inline-block h-2 w-2 rounded-full bg-[#3fb950]" />
                       <span className="text-sm font-medium text-[#f0f0f3]">
-                        Votre chatbot est prêt
+                        Votre chatbot est pr&ecirc;t
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -447,10 +448,10 @@ export default function Home() {
                   </div>
 
                   {/* Instruction */}
-                  <div className="px-5 py-4 border-b border-[#1f1f28]">
+                  <div className="border-b border-[#1f1f28] px-5 py-4">
                     <p className="text-sm text-[#8b8b9e]">
                       Collez ce snippet dans votre HTML, juste avant{" "}
-                      <code className="text-[#f0f0f3] bg-[#1a1a24] px-1.5 py-0.5 rounded text-xs">
+                      <code className="rounded bg-[#1a1a24] px-1.5 py-0.5 text-xs text-[#f0f0f3]">
                         &lt;/body&gt;
                       </code>
                     </p>
@@ -459,8 +460,8 @@ export default function Home() {
                   {/* Code block */}
                   <div className="relative">
                     {/* Tab bar */}
-                    <div className="flex items-center px-4 py-1.5 bg-[#0d0d14] border-b border-[#1f1f28]">
-                      <span className="text-[10px] uppercase tracking-wider text-[#8b8b9e] border-b border-blue-500 pb-1.5">
+                    <div className="flex items-center border-b border-[#1f1f28] bg-[#0d0d14] px-4 py-1.5">
+                      <span className="border-b border-blue-500 pb-1.5 text-[10px] uppercase tracking-wider text-[#8b8b9e]">
                         HTML
                       </span>
                     </div>
@@ -468,14 +469,14 @@ export default function Home() {
                     {/* Code with line numbers */}
                     <div className="flex overflow-x-auto bg-[#0a0a0f] p-4">
                       {/* Line numbers */}
-                      <div className="flex flex-col w-8 shrink-0 select-none text-right pr-4 font-mono text-xs leading-5 text-[#3f3f4a]">
+                      <div className="flex w-8 shrink-0 select-none flex-col pr-4 text-right font-mono text-xs leading-5 text-[#3f3f4a]">
                         <span>1</span>
                         <span>2</span>
                         <span>3</span>
                       </div>
 
                       {/* Syntax-highlighted code */}
-                      <pre className="font-mono text-xs leading-5 whitespace-pre">
+                      <pre className="whitespace-pre font-mono text-xs leading-5">
                         <span style={{ color: "#f85149" }}>&lt;script</span>
                         {"\n"}
                         <span>{"  "}</span>
@@ -500,17 +501,17 @@ export default function Home() {
                     {/* Copy button */}
                     <button
                       onClick={handleCopy}
-                      className="absolute top-10 right-3 rounded-md bg-[#1a1a24] border border-[#2a2a34] px-3 py-1.5 text-xs text-[#8b8b9e] hover:text-[#f0f0f3] transition-colors"
+                      className="absolute right-3 top-10 rounded-md border border-[#2a2a34] bg-[#1a1a24] px-3 py-1.5 text-xs text-[#8b8b9e] transition-colors hover:text-[#f0f0f3]"
                     >
                       {copied ? "Copié !" : "Copier"}
                     </button>
                   </div>
 
                   {/* Bottom bar */}
-                  <div className="flex items-center justify-between px-5 py-3 border-t border-[#1f1f28] bg-[#0d0d14]">
+                  <div className="flex items-center justify-between border-t border-[#1f1f28] bg-[#0d0d14] px-5 py-3">
                     <button
                       onClick={handleReset}
-                      className="text-xs text-[#8b8b9e] hover:text-[#f0f0f3] transition-colors"
+                      className="text-xs text-[#8b8b9e] transition-colors hover:text-[#f0f0f3]"
                     >
                       Recommencer
                     </button>
@@ -523,41 +524,41 @@ export default function Home() {
 
               {/* Conversion banners */}
               {state === "complete" && completeData && (
-                <>
+                <div className="border-t border-[#1f1f28] p-4 space-y-3">
                   {completeData.chunksIndexed < 20 && (
-                    <div className="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/5 px-5 py-4">
-                      <p className="text-sm text-[#a0a0b0] leading-relaxed">
-                        <span className="text-amber-400 font-medium">Résultats limités ?</span>{" "}
+                    <div className="rounded-[4px] border border-amber-500/20 bg-amber-500/5 px-5 py-4">
+                      <p className="text-sm leading-relaxed text-[#a0a0b0]">
+                        <span className="font-medium text-amber-400">R&eacute;sultats limit&eacute;s ?</span>{" "}
                         Si votre chatbot manque d&apos;informations, c&apos;est probablement que votre site
-                        n&apos;est pas optimisé pour la lecture par les bots IA — ce qui signifie
-                        qu&apos;il ne ressort pas non plus dans les résultats de ChatGPT, Gemini ou
+                        n&apos;est pas optimis&eacute; pour la lecture par les bots IA — ce qui signifie
+                        qu&apos;il ne ressort pas non plus dans les r&eacute;sultats de ChatGPT, Gemini ou
                         Perplexity.{" "}
                         <a
                           href="https://somastudio.xyz/nos-services/site-ia-ready"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-400 hover:text-blue-300 underline"
+                          className="text-blue-400 underline hover:text-blue-300"
                         >
-                          Optimiser mon SEO &amp; AEO →
+                          Optimiser mon SEO &amp; AEO &rarr;
                         </a>
                       </p>
                     </div>
                   )}
-                  <div className="mt-3 rounded-lg border border-[#1f1f28] bg-[#0d0d14] px-5 py-4">
-                    <p className="text-sm text-[#8b8b9e] leading-relaxed">
+                  <div className="rounded-[4px] border border-[#1f1f28] bg-[#0d0d14] px-5 py-4">
+                    <p className="text-sm leading-relaxed text-[#8b8b9e]">
                       Vous souhaitez personnaliser le ton, connecter vos documents internes, ou
-                      étendre les capacités de votre chatbot ?{" "}
+                      &eacute;tendre les capacit&eacute;s de votre chatbot ?{" "}
                       <a
                         href="https://somastudio.xyz/nos-services/assistant-ia-rag"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-400 hover:text-blue-300 underline"
+                        className="text-blue-400 underline hover:text-blue-300"
                       >
-                        Découvrir notre offre sur mesure →
+                        D&eacute;couvrir notre offre sur mesure &rarr;
                       </a>
                     </p>
                   </div>
-                </>
+                </div>
               )}
             </div>
           )}
@@ -565,20 +566,20 @@ export default function Home() {
       </section>
 
       {/* Section 5: Bottom CTA */}
-      <section className="pb-16 border-t border-[#1f1f28] pt-16">
-        <div className="mx-auto max-w-[940px] px-6 text-center">
-          <h2 className="text-2xl font-medium">
+      <section className="border-t border-[#d9d9d9] py-[var(--spacing-section)] max-[991px]:py-[var(--spacing-section-mobile)]">
+        <div className="mx-auto max-w-[var(--container-max)] px-[var(--spacing-container)] text-center">
+          <h2 className="text-[24px] font-medium text-[#000]">
             Besoin de plus de 10 pages ?
           </h2>
-          <p className="mt-3 text-[#8b8b9e]">
-            Nous construisons des assistants IA sur mesure, connectés à vos
+          <p className="mt-3 text-[17px] text-[#717171]">
+            Nous construisons des assistants IA sur mesure, connect&eacute;s &agrave; vos
             documents internes.
           </p>
           <a
             href="https://somastudio.xyz/contact"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-block rounded-full border border-[#2a2a34] bg-[#111118] px-6 py-2.5 text-sm font-medium text-[#f0f0f3] hover:bg-[#1a1a24] transition-colors"
+            className="mt-6 inline-block rounded-[100px] border border-[#d9d9d9] bg-white px-5 py-2.5 text-[13px] font-normal text-[#000] transition-all duration-300 hover:bg-[#0e1527] hover:text-white"
           >
             Discuter de votre projet
           </a>
@@ -586,15 +587,15 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="mt-auto border-t border-[#1f1f28] px-6 py-8">
-        <div className="mx-auto max-w-[940px] flex items-center justify-between text-sm text-[#8b8b9e]">
+      <footer className="mt-auto border-t border-[#d9d9d9] px-[var(--spacing-container)] py-8">
+        <div className="mx-auto flex max-w-[var(--container-max)] items-center justify-between text-[13px] text-[#717171]">
           <span>Open source (MIT)</span>
           <div className="flex items-center gap-4">
             <a
               href="https://github.com/soma-studio/soma-chat"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-[#8b8b9e] transition-colors"
+              className="transition-colors hover:text-[#333]"
             >
               GitHub
             </a>
@@ -602,7 +603,7 @@ export default function Home() {
               href="https://somastudio.xyz"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-[#8b8b9e] transition-colors"
+              className="transition-colors hover:text-[#333]"
             >
               SOMA Studio
             </a>
