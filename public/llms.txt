@@ -1,0 +1,64 @@
+# Chatbot IA gratuit — SOMA Studio
+
+> Ajoutez un chatbot IA intelligent à votre site web en 5 minutes. Gratuit, open source, sans clé API.
+
+## What it does
+
+Chatbot IA by SOMA Studio scrapes your public website pages, chunks the content, indexes it as vector embeddings (Mistral AI), and serves a fully functional RAG chatbot via an embeddable widget. One line of code, zero configuration.
+
+## Features
+
+- Automatic website scraping (public pages)
+- Intelligent content chunking
+- Vector indexing via Mistral AI embeddings
+- RAG chatbot with sourced answers
+- Embeddable widget (one line of code, Shadow DOM)
+- Auto-generated suggested questions
+- No API key required — fully hosted
+- Open source (MIT) — self-host possible
+
+## How it works
+
+1. Enter your website URL
+2. We crawl and index your public pages into vector embeddings
+3. Paste the widget script into your HTML — the chatbot appears bottom-right
+
+## Stack
+
+- Next.js, TypeScript, Tailwind CSS
+- Mistral AI (embeddings + generation)
+- Qdrant (vector database)
+- Shadow DOM widget (~15 KB)
+
+## Pricing
+
+- Free tier: up to 10 pages indexed
+- Custom AI assistants: unlimited pages, tailored behavior — contact us
+
+## FAQ
+
+Q: What types of sites are supported?
+A: Any site with public HTML content: marketing sites, blogs, e-commerce, technical documentation. Built with Webflow, WordPress, Shopify, Next.js, or static HTML — all supported.
+
+Q: Can the chatbot respond in multiple languages?
+A: Yes. Mistral is multilingual. The chatbot detects your site language and responds accordingly.
+
+Q: Is my data safe?
+A: Only public content is indexed — the same pages Google can see. No private data, no forms, no authenticated areas. Vector embeddings are stored on Qdrant Cloud (AWS eu-west-1). The code is open source (MIT).
+
+Q: What happens after 10 pages?
+A: The free tier indexes the first 10 pages. For most marketing sites, that covers the key pages. For more content, we offer custom AI assistants with no page limit.
+
+Q: Can I customize the chatbot appearance?
+A: You can change the accent color via the data-color attribute on the script tag. The widget uses Shadow DOM for CSS isolation.
+
+## Links
+
+- Product: https://chatbot.somastudio.xyz
+- Studio: https://somastudio.xyz
+- Services: https://somastudio.xyz/nos-services
+- Contact: https://somastudio.xyz/contact
+
+## Attribution
+
+Built by SOMA Studio — https://somastudio.xyz

@@ -18,14 +18,10 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Chatbot IA gratuit — SOMA Studio",
-  description:
-    "Ajoutez un chatbot IA à votre site en 5 minutes. Scraping automatique, indexation vectorielle, widget embeddable. Gratuit, open source.",
-  openGraph: {
-    title: "Chatbot IA gratuit — SOMA Studio",
-    description:
-      "Ajoutez un chatbot IA à votre site en 5 minutes. Gratuit, open source.",
-    url: "https://chatbot.somastudio.xyz",
+  metadataBase: new URL('https://chatbot.somastudio.xyz'),
+  title: {
+    default: 'Chatbot IA gratuit — SOMA Studio',
+    template: '%s — SOMA Studio',
   },
 };
 
