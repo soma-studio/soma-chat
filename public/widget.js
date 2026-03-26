@@ -322,18 +322,24 @@
 
     .soma-footer {
       text-align: center;
-      padding: 6px 16px 10px;
+      padding: 8px 16px 12px;
       background: #111118;
     }
     .soma-footer a {
       font-size: 11px;
-      color: #55556a;
+      color: #8b8b9e;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 4px;
     }
-    .soma-footer a:hover { color: #8b8b9e; }
+    .soma-footer a:hover { color: #f0f0f3; }
+    .soma-footer a strong {
+      font-weight: 800;
+      color: #f0f0f3;
+      letter-spacing: 0.02em;
+    }
+    .soma-footer a:hover strong { color: #fff; }
 
     .soma-welcome {
       text-align: center;
@@ -483,7 +489,7 @@
   footerLink.href = "https://somastudio.xyz";
   footerLink.target = "_blank";
   footerLink.rel = "noopener noreferrer";
-  footerLink.innerHTML = '<svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/></svg> Powered by SOMA Studio \u2197';
+  footerLink.innerHTML = 'Powered by <strong>SOMA Studio</strong> \u2197';
   footer.appendChild(footerLink);
   panel.appendChild(footer);
 
