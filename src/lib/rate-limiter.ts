@@ -1,108 +1,132 @@
-const COLLECTION = "soma_chat_rate_limits";
+/**
+ * Rate limiter backed by Supabase PostgreSQL.
+ * Uses an atomic SQL function (INSERT ... ON CONFLICT DO UPDATE ... RETURNING)
+ * to prevent race conditions between Vercel serverless instances.
+ *
+ * === SQL SETUP (run manually in Supabase SQL Editor) ===
+ *
+ * CREATE TABLE IF NOT EXISTS rate_limits (
+ *   site_id TEXT PRIMARY KEY,
+ *   count INTEGER NOT NULL DEFAULT 1,
+ *   window_start BIGINT NOT NULL
+ * );
+ *
+ * CREATE OR REPLACE FUNCTION check_rate_limit(
+ *   p_site_id TEXT,
+ *   p_now BIGINT,
+ *   p_window_ms BIGINT,
+ *   p_limit INTEGER
+ * ) RETURNS BOOLEAN AS $$
+ * DECLARE
+ *   v_count INTEGER;
+ * BEGIN
+ *   INSERT INTO rate_limits (site_id, count, window_start)
+ *   VALUES (p_site_id, 1, p_now)
+ *   ON CONFLICT (site_id) DO UPDATE SET
+ *     count = CASE
+ *       WHEN rate_limits.window_start < (p_now - p_window_ms) THEN 1
+ *       ELSE rate_limits.count + 1
+ *     END,
+ *     window_start = CASE
+ *       WHEN rate_limits.window_start < (p_now - p_window_ms) THEN p_now
+ *       ELSE rate_limits.window_start
+ *     END
+ *   RETURNING count INTO v_count;
+ *
+ *   RETURN v_count <= p_limit;
+ * END;
+ * $$ LANGUAGE plpgsql;
+ *
+ * === CLEANUP: delete old Qdrant collection ===
+ * curl -X DELETE "https://<QDRANT_URL>/collections/soma_chat_rate_limits" \
+ *   -H "api-key: <QDRANT_API_KEY>"
+ */
+
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
+
 const RATE_LIMIT = 20;
 const RATE_WINDOW_MS = 60_000;
 
-const qdrantUrl = () => process.env.QDRANT_URL!;
-const qdrantHeaders = () => ({
-  "api-key": process.env.QDRANT_API_KEY!,
-  "Content-Type": "application/json",
-});
+let _supabase: SupabaseClient | null = null;
 
-let collectionReady = false;
-
-async function ensureCollection(): Promise<void> {
-  if (collectionReady) return;
-
-  const url = `${qdrantUrl()}/collections/${COLLECTION}`;
-  const check = await fetch(url, {
-    headers: { "api-key": process.env.QDRANT_API_KEY! },
-  });
-
-  if (check.ok) {
-    collectionReady = true;
-    return;
+function getSupabase(): SupabaseClient | null {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
+  if (!_supabase) {
+    _supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
   }
-
-  const res = await fetch(url, {
-    method: "PUT",
-    headers: qdrantHeaders(),
-    body: JSON.stringify({
-      vectors: { size: 1, distance: "Cosine" },
-    }),
-  });
-
-  if (!res.ok) {
-    const errText = await res.text().catch(() => "unknown");
-    throw new Error(`Failed to create rate limit collection: ${errText}`);
-  }
-
-  collectionReady = true;
-}
-
-function hashId(siteId: string): number {
-  let hash = 2166136261;
-  for (let i = 0; i < siteId.length; i++) {
-    hash ^= siteId.charCodeAt(i);
-    hash = (hash * 16777619) & 0x7fffffff;
-  }
-  return hash;
+  return _supabase;
 }
 
 export async function checkRateLimit(siteId: string): Promise<boolean> {
   try {
-    await ensureCollection();
+    const supabase = getSupabase();
+    if (!supabase) return true; // No Supabase = dev mode, allow all
 
-    const pointId = hashId(siteId);
     const now = Date.now();
 
-    // Try to get existing record
-    const getRes = await fetch(
-      `${qdrantUrl()}/collections/${COLLECTION}/points`,
-      {
-        method: "POST",
-        headers: qdrantHeaders(),
-        body: JSON.stringify({ ids: [pointId], with_payload: true }),
-      }
-    );
+    // Atomic: insert-or-increment + check in one SQL call
+    const { data, error } = await supabase.rpc("check_rate_limit", {
+      p_site_id: siteId,
+      p_now: now,
+      p_window_ms: RATE_WINDOW_MS,
+      p_limit: RATE_LIMIT,
+    });
 
-    let existing: { payload?: Record<string, unknown> } | null = null;
-    if (getRes.ok) {
-      const data = await getRes.json();
-      existing = data.result?.[0] ?? null;
-      console.log(`[Rate Limiter] siteId=${siteId} existing=${JSON.stringify(existing?.payload)}`);
+    if (error) {
+      console.error("[Rate Limiter] RPC error, using fallback:", error.message);
+      return await fallbackRateLimit(supabase, siteId, now);
     }
 
-    if (!existing?.payload || now > (existing.payload.resetTime as number)) {
-      // New window
-      await upsertPoint(pointId, { siteId, count: 1, resetTime: now + RATE_WINDOW_MS });
-      return true;
+    if (data === false) {
+      console.log(`[Rate Limiter] BLOCKED siteId=${siteId}`);
     }
 
-    const count = existing.payload.count as number;
-    if (count >= RATE_LIMIT) {
-      console.log(`[Rate Limiter] BLOCKED siteId=${siteId} count=${count}`);
-      return false;
-    }
-
-    // Increment
-    await upsertPoint(pointId, { siteId, count: count + 1, resetTime: existing.payload.resetTime });
-    return true;
+    return data as boolean;
   } catch (err) {
-    // If rate limiter fails, allow the request (fail-open)
     console.error("[Rate Limiter] Error:", err instanceof Error ? err.message : String(err));
-    return true;
+    return true; // fail-open
   }
 }
 
-async function upsertPoint(id: number, payload: Record<string, unknown>): Promise<void> {
-  await fetch(
-    `${qdrantUrl()}/collections/${COLLECTION}/points`,
-    {
-      method: "PUT",
-      headers: qdrantHeaders(),
-      body: JSON.stringify({
-        points: [{ id, vector: [0], payload }],
-      }),
-    }
-  );
+/**
+ * Fallback if the RPC function doesn't exist yet (before SQL setup).
+ * Not atomic — has minor race window, but better than nothing.
+ */
+async function fallbackRateLimit(
+  supabase: SupabaseClient,
+  siteId: string,
+  now: number
+): Promise<boolean> {
+  const windowStart = now - RATE_WINDOW_MS;
+
+  const { data: existing } = await supabase
+    .from("rate_limits")
+    .select("count, window_start")
+    .eq("site_id", siteId)
+    .single();
+
+  if (!existing || existing.window_start < windowStart) {
+    await supabase
+      .from("rate_limits")
+      .upsert(
+        { site_id: siteId, count: 1, window_start: now },
+        { onConflict: "site_id" }
+      );
+    return true;
+  }
+
+  if (existing.count >= RATE_LIMIT) {
+    console.log(`[Rate Limiter] BLOCKED (fallback) siteId=${siteId} count=${existing.count}`);
+    return false;
+  }
+
+  await supabase
+    .from("rate_limits")
+    .update({ count: existing.count + 1 })
+    .eq("site_id", siteId);
+
+  return true;
 }
