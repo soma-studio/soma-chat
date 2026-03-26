@@ -305,7 +305,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
           </h2>
 
           {/* Unified dark card */}
-          <div id="sandbox" className="mt-10 overflow-hidden rounded-[var(--radius-default)] border border-[#1f1f28] bg-[#0a0a0f]">
+          <div id="sandbox" className="mt-10 overflow-hidden rounded-2xl border border-[#1f1f28] bg-[#0a0a0f]">
 
           {/* Form header */}
           <div className="border-b border-[#1f1f28] bg-[#0d0d14] px-5 py-4">
@@ -325,7 +325,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
               <button
                 type="submit"
                 disabled={state === "running" || !url.trim()}
-                className="rounded-[var(--radius-default)] bg-[#C8E6FF] px-5 py-2.5 text-sm font-medium text-dark transition-colors hover:bg-[#a8d4f5] disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-[var(--radius-default)] bg-white px-6 py-2.5 text-sm font-semibold text-dark transition-colors hover:bg-[#e0e0e0] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {state === "running" ? "En cours..." : "Cr\u00e9er"}
               </button>
