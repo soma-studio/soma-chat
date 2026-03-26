@@ -61,7 +61,7 @@ export async function checkRateLimit(siteId: string): Promise<boolean> {
       {
         method: "POST",
         headers: qdrantHeaders(),
-        body: JSON.stringify({ ids: [pointId] }),
+        body: JSON.stringify({ ids: [pointId], with_payload: true }),
       }
     );
 
@@ -69,6 +69,7 @@ export async function checkRateLimit(siteId: string): Promise<boolean> {
     if (getRes.ok) {
       const data = await getRes.json();
       existing = data.result?.[0] ?? null;
+      console.log(`[Rate Limiter] siteId=${siteId} existing=${JSON.stringify(existing?.payload)}`);
     }
 
     if (!existing?.payload || now > (existing.payload.resetTime as number)) {
@@ -79,6 +80,7 @@ export async function checkRateLimit(siteId: string): Promise<boolean> {
 
     const count = existing.payload.count as number;
     if (count >= RATE_LIMIT) {
+      console.log(`[Rate Limiter] BLOCKED siteId=${siteId} count=${count}`);
       return false;
     }
 
