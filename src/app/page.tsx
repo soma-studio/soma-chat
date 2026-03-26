@@ -72,17 +72,22 @@ export default function Home() {
     e.preventDefault();
     if (!url.trim() || state === "running") return;
 
+    let normalizedUrl = url.trim();
+    if (!normalizedUrl.startsWith("http://") && !normalizedUrl.startsWith("https://")) {
+      normalizedUrl = "https://" + normalizedUrl;
+    }
+
     setState("running");
     setLines([]);
     setCompleteData(null);
-    addLine(`\u276F npx pipeline --url ${url}`, "#8b8b9e");
+    addLine(`\u276F npx pipeline --url ${normalizedUrl}`, "#8b8b9e");
     addLine("");
 
     try {
       const res = await fetch("/api/pipeline", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: url.trim() }),
+        body: JSON.stringify({ url: normalizedUrl }),
       });
 
       if (!res.ok) {
@@ -307,7 +312,7 @@ export default function Home() {
           {/* URL Form — always visible */}
           <form onSubmit={handleSubmit} className="flex w-full max-w-lg gap-3">
             <input
-              type="url"
+              type="text"
               placeholder="https://votre-site.com"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
