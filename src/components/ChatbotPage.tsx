@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+import { Bot } from "lucide-react";
 import type { CMSFeature, CMSStep, CMSFaqItem } from "@/lib/cms-data";
 import { FAQ } from "@/components/FAQ";
 
@@ -297,37 +298,40 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
           </div>
         </div>
 
-        {/* Sandbox */}
-        <div id="sandbox" className="mt-20">
-          <h2 className="text-h3 font-medium">
-            Cr&eacute;er mon chatbot
-          </h2>
-          {/* URL Form */}
-          <form onSubmit={handleSubmit} className="mt-10 flex w-full gap-3">
-            <input
-              type="text"
-              aria-label="URL de votre site web"
-              placeholder="https://votre-site.com"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              disabled={state === "running"}
-              className="flex-1 rounded-[var(--radius-default)] border border-border bg-white px-4 py-3 text-md text-body-text placeholder-[#999] outline-none transition-colors focus:border-dark disabled:opacity-50"
-            />
-            <button
-              type="submit"
-              disabled={state === "running" || !url.trim()}
-              className="rounded-[var(--radius-default)] bg-dark px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-button-hover disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {state === "running" ? "En cours..." : "Cr\u00e9er"}
-            </button>
-          </form>
-          <p className="mt-2 text-sm text-gray">
-            10 pages max. scrapp&eacute;es &mdash; Aucune carte requise.
-          </p>
+        {/* Sandbox — unified dark card */}
+        <div id="sandbox" className="mt-8 overflow-hidden rounded-[var(--radius-default)] border border-[#1f1f28] bg-[#0a0a0f]">
 
-          {/* Terminal + Preview + Snippet — dark island */}
+          {/* Form header */}
+          <div className="border-b border-[#1f1f28] bg-[#0d0d14] px-5 py-4">
+            <p className="mb-3 text-sm font-medium text-[#f0f0f3]">
+              Cr&eacute;er mon chatbot
+            </p>
+            <form onSubmit={handleSubmit} className="flex w-full gap-3">
+              <input
+                type="text"
+                aria-label="URL de votre site web"
+                placeholder="https://votre-site.com"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                disabled={state === "running"}
+                className="flex-1 rounded-[var(--radius-default)] border border-[#2a2a34] bg-[#0a0a0f] px-4 py-2.5 text-md text-[#f0f0f3] placeholder-[#55556a] outline-none transition-colors focus:border-[#C8E6FF] disabled:opacity-50"
+              />
+              <button
+                type="submit"
+                disabled={state === "running" || !url.trim()}
+                className="rounded-[var(--radius-default)] bg-[#C8E6FF] px-5 py-2.5 text-sm font-medium text-dark transition-colors hover:bg-[#a8d4f5] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {state === "running" ? "En cours..." : "Cr\u00e9er"}
+              </button>
+            </form>
+            <p className="mt-2 text-[11px] text-[#55556a]">
+              10 pages max. scrapp&eacute;es — Aucune carte requise.
+            </p>
+          </div>
+
+          {/* Terminal + Preview + Snippet — only when running or complete */}
           {(state === "running" || state === "complete") && (
-            <div className="mt-8 overflow-hidden rounded-[var(--radius-default)] border border-[#1f1f28] bg-[#0a0a0f]">
+            <>
               {/* Terminal window */}
               <div>
                 {/* VSCode-style tab bar */}
@@ -494,9 +498,16 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
                   </div>
                 </div>
               )}
+            </>
+          )}
 
+          {/* Empty state */}
+          {state === "idle" && (
+            <div className="flex items-center justify-center py-16 text-sm text-[#3f3f4a]">
+              Entrez l&apos;URL de votre site pour commencer
             </div>
           )}
+
         </div>
 
         {/* Upsell: Free vs Custom comparison */}
@@ -522,7 +533,6 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
                   Chatbot gratuit
                 </h3>
               </div>
-              <p className="mt-1 text-sm text-gray">Ce que vous avez maintenant</p>
               <ul className="mt-6 space-y-3">
                 <li className="flex items-start gap-3 text-md text-body-text">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-border" />
@@ -550,14 +560,13 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
             {/* Custom tier card */}
             <div className="rounded-[var(--radius-default)] border-2 border-dark bg-white p-8">
               <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-dark text-sm font-semibold text-white">
-                  &#9733;
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-dark text-white">
+                  <Bot size={16} />
                 </span>
                 <h3 className="text-body font-semibold text-title-text">
                   Chatbot sur mesure
                 </h3>
               </div>
-              <p className="mt-1 text-sm text-gray">&Agrave; partir de 1&nbsp;800&nbsp;&euro;</p>
               <ul className="mt-6 space-y-3">
                 <li className="flex items-start gap-3 text-md text-body-text">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-dark" />
@@ -592,12 +601,6 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
                   Analytics et suivi des conversations
                 </li>
               </ul>
-              <a
-                href="https://somastudio.xyz/nos-services/assistant-ia-rag"
-                className="mt-8 inline-block w-full rounded-[var(--radius-pill)] bg-dark px-5 py-2.5 text-center text-sm font-normal text-white transition-all duration-300 hover:bg-button-hover"
-              >
-                D&eacute;couvrir l&apos;offre sur mesure
-              </a>
             </div>
 
           </div>
