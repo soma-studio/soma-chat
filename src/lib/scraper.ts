@@ -29,6 +29,70 @@ const SKIP_EXTENSIONS = new Set([
   ".ppt", ".pptx", ".css", ".js", ".xml", ".rss",
 ]);
 
+// --- Email extraction ---
+const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+
+const FALSE_POSITIVE_EMAILS = [
+  "example", "noreply", "no-reply", "wix", "wordpress", "sentry",
+  "test@", "user@", "email@", "name@", "your@", "info@example",
+  "protection@", "abuse@", "postmaster@",
+];
+
+const PREFERRED_EMAIL_PREFIXES = [
+  "contact", "info", "hello", "accueil", "bonjour",
+  "direction", "commercial", "support",
+];
+
+function extractEmailsFromHtml(html: string, $: cheerio.CheerioAPI): string[] {
+  const emailSet = new Set<string>();
+
+  // From mailto links
+  $('a[href^="mailto:"]').each((_i, el) => {
+    const href = $(el).attr("href");
+    if (href) {
+      const email = decodeURIComponent(
+        href.replace("mailto:", "").split("?")[0].trim()
+      ).toLowerCase();
+      if (email.includes("@")) emailSet.add(email);
+    }
+  });
+
+  // From raw HTML via regex
+  const regexMatches = html.match(EMAIL_REGEX) || [];
+  for (const email of regexMatches) {
+    emailSet.add(decodeURIComponent(email.toLowerCase()));
+  }
+
+  // Filter false positives
+  return Array.from(emailSet).filter((email) =>
+    !FALSE_POSITIVE_EMAILS.some((pattern) => email.includes(pattern))
+  );
+}
+
+function pickBestEmail(emails: string[], siteUrl: string): string | null {
+  if (emails.length === 0) return null;
+
+  let domain: string;
+  try {
+    domain = new URL(siteUrl).hostname.replace(/^www\./, "");
+  } catch {
+    return emails[0];
+  }
+
+  // Prefer emails matching the website domain
+  const domainMatches = emails.filter((email) => email.split("@")[1] === domain);
+
+  if (domainMatches.length > 0) {
+    for (const prefix of PREFERRED_EMAIL_PREFIXES) {
+      const match = domainMatches.find((e) => e.startsWith(prefix + "@"));
+      if (match) return match;
+    }
+    return domainMatches[0];
+  }
+
+  return emails[0];
+}
+
 // --- Interfaces ---
 export interface ScrapeOptions {
   url: string;
@@ -53,6 +117,8 @@ export interface ScrapeCompleteEvent {
   pagesScraped: number;
   totalChars: number;
   elapsedMs: number;
+  contactEmail: string | null;
+  allEmails: string[];
 }
 
 export interface ScrapeLimitEvent {
@@ -246,10 +312,11 @@ export async function scrapeWebsite(options: ScrapeOptions): Promise<ScrapeCompl
   const queue: { url: string; depth: number }[] = [];
   let pagesScraped = 0;
   let totalContentSize = 0;
+  const allFoundEmails: string[] = [];
 
   const rootUrl = normalizeUrl(options.url, options.url);
   if (!rootUrl) {
-    return { pagesScraped: 0, totalChars: 0, elapsedMs: Date.now() - startTime };
+    return { pagesScraped: 0, totalChars: 0, elapsedMs: Date.now() - startTime, contactEmail: null, allEmails: [] };
   }
 
   queue.push({ url: rootUrl, depth: 0 });
@@ -261,6 +328,11 @@ export async function scrapeWebsite(options: ScrapeOptions): Promise<ScrapeCompl
     if (!html) continue;
 
     const $ = cheerio.load(html);
+
+    // Extract emails before noise removal (emails often in footer)
+    const pageEmails = extractEmailsFromHtml(html, $);
+    allFoundEmails.push(...pageEmails);
+
     const { title, description } = extractMetadata($);
 
     // Discover links before removing noise
@@ -306,10 +378,15 @@ export async function scrapeWebsite(options: ScrapeOptions): Promise<ScrapeCompl
     });
   }
 
+  const uniqueEmails = [...new Set(allFoundEmails)];
+  const contactEmail = pickBestEmail(uniqueEmails, options.url);
+
   const result: ScrapeCompleteEvent = {
     pagesScraped,
     totalChars: totalContentSize,
     elapsedMs: Date.now() - startTime,
+    contactEmail,
+    allEmails: uniqueEmails,
   };
 
   options.onComplete?.(result);

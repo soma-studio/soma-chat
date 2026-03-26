@@ -19,7 +19,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 - **Site Registry:** Qdrant collection `soma_chat_registry` (payload-only, no vectors)
 - **Widget:** Vanilla JS, Shadow DOM, ~15 KB
 - **Deployment:** Vercel (Hobby plan)
-- **Fonts:** Geist Sans + Geist Mono (via next/font)
+- **Fonts:** Manrope + Geist Mono (via next/font)
 
 ## Architecture
 
@@ -131,6 +131,8 @@ QDRANT_URL=                # Qdrant Cloud instance URL
 QDRANT_API_KEY=            # Qdrant Cloud API key (JWT)
 ADMIN_SECRET=              # Admin secret for protected routes
 NEXT_PUBLIC_SITE_URL=      # Widget script origin (https://chatbot.somastudio.xyz in prod)
+SUPABASE_URL=              # Supabase project URL (same as somastudio-site)
+SUPABASE_SERVICE_ROLE_KEY= # Supabase service role key (server only)
 ```
 
 ## DO NOT

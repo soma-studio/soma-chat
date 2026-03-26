@@ -4,6 +4,7 @@ import { scrapeWebsite } from "./scraper";
 import { chunkSite } from "./chunker";
 import { indexSite } from "./indexer";
 import { upsertSite } from "./sites";
+import { captureLeadFromChatbot } from "./lead-capture";
 import type { SiteRecord } from "@/types";
 
 // --- Event types ---
@@ -169,6 +170,20 @@ export async function runPipeline(options: PipelineOptions): Promise<void> {
     } catch (err) {
       console.error("Site registration failed:", err);
       // Non-fatal: the Qdrant collection with chunks exists, just the registry entry is missing
+    }
+
+    // Step 5: Capture lead for prospection (non-blocking, non-fatal)
+    try {
+      await captureLeadFromChatbot({
+        siteUrl: url,
+        siteName,
+        contactEmail: scrapeResult.contactEmail,
+        allEmails: scrapeResult.allEmails,
+        pagesIndexed: scrapeResult.pagesScraped,
+        siteId,
+      });
+    } catch {
+      // Silently ignore — lead capture is optional
     }
 
     onEvent({
