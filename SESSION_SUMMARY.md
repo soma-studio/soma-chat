@@ -32,11 +32,6 @@ New standalone project. Embeddable RAG chatbot widget for any website. Based on 
 - Relative source filter: 80% of top score, max 2 sources
 - LLM prompt: "Ne cite QUE les sources utilisées"
 
-### Commits
-- `9d5cd01` — feat: SOMA Chat MVP
-- `409e7fd` — polish: widget UX overhaul
-- Multiple fix commits for markdown, sources, site API
-
 ---
 
 ## Session 35B — 25 mars 2026 — Web Onboarding (SSE Pipeline)
@@ -52,9 +47,6 @@ Wire the landing page to the pipeline. Visitor enters URL → watches pages scra
 - Free tier constants (10 pages, 3 depth)
 - CLI scripts rewritten as thin wrappers
 
-### Commit
-- `ad57701` — feat: web onboarding — SSE pipeline API + terminal UI + free tier
-
 ---
 
 ## Session 35C — 25 mars 2026 — Vercel Serverless Fix
@@ -69,15 +61,9 @@ Vercel filesystem is read-only except /tmp. Pipeline failed silently when writin
 - /tmp cleanup after pipeline completion
 - FNV-1a hash for deterministic Qdrant point IDs
 
-### Commit
-- `6fbd220` — fix: Vercel serverless compatibility
-
 ---
 
 ## Session 35E — 25 mars 2026 — Project Documentation Bootstrap
-
-### Context
-Project built rapidly, missing proper documentation.
 
 ### What was created
 - CLAUDE.md: complete project guide (stack, architecture, commands, env vars, DO NOTs)
@@ -85,6 +71,84 @@ Project built rapidly, missing proper documentation.
 - HANDOFF.md: current state + known issues + next steps
 - SESSION_SUMMARY.md: full session history (35A through 35E)
 - Deleted AGENTS.md boilerplate
+
+---
+
+## Session 35H-35K — 26 mars 2026 — Landing Page + Intelligence + Scraper
+
+### Context
+Multi-step session: redesign landing page to match somastudio.xyz service layout, add lead capture, add intelligence layer (site profiling), fix content extraction for Webflow sites, add conversion banners.
+
+### 35H — Landing Page Redesign
+- Manrope font replaces Geist Sans (matches somastudio.xyz)
+- IC service page layout: Hero → Features + "Gratuit" sidebar → How it works → Sandbox → CTA → Footer
+- All sections always visible (pipeline appears inline when triggered)
+- Left-aligned, max-w-[940px] container
+
+### 35I — Lead Capture
+- Email extraction during BFS crawl (regex + mailto links, false positive filtering)
+- pickBestEmail: domain matching + preferred prefix ordering
+- src/lib/lead-capture.ts: Supabase insert with dedup by website URL
+- Leads as source="soma-chat", industry_id="soma-chatbot", score=40
+- Non-fatal: never breaks pipeline, silently skips if Supabase not configured
+- @supabase/supabase-js installed
+
+### 35J — Intelligence Layer + RAG Quality
+- src/lib/site-analyzer.ts: LLM-powered site analysis via Mistral
+  - Generates SiteProfile: businessType, businessName, location, keyFacts, tone, persona, summary, suggestedQuestions
+  - Fallback profile if LLM fails
+- SiteProfile stored in SiteRecord (Qdrant registry), injected into RAG system prompt
+- keyFacts provide fallback knowledge when vector search misses
+- Persona/tone make chatbot conversational
+- Adaptive RAG thresholds: 0.25 for <30 chunks, 0.35 for <100, 0.45 for 100+
+- Multilingual page variant filter (/en, /it, /es, /de skipped)
+- "Analyse du site en cours..." purple step in terminal UI
+- Bare domain input fix (auto-prepend https://)
+
+### 35K — Scraper Fix + Conversion Banners
+- JSON-LD extraction BEFORE script tag removal
+  - flattenJsonLd() converts schema.org (Hotel, Restaurant, etc.) into readable text
+  - Skips non-content schemas (BreadcrumbList, WebSite, etc.)
+- Nuclear text node fallback: walks every #text node in DOM
+  - Deduplicates (Webflow mobile/desktop variants)
+  - Triggers when < 300 chars extracted
+- hoteldesarts-aix.fr results: 151 chars → 4,084 chars, 2 chunks → 18 chunks
+- Conversion banners after snippet card:
+  - AEO/SEO upsell (amber, conditional: <20 chunks) → somastudio.xyz/nos-services/site-ia-ready
+  - Custom chatbot upsell (always visible) → somastudio.xyz/nos-services/assistant-ia-rag
+
+### Files created/modified
+
+| File | Change |
+|------|--------|
+| `src/app/layout.tsx` | Manrope font (was Geist Sans) |
+| `src/app/globals.css` | --font-manrope CSS variable |
+| `src/app/page.tsx` | Full redesign: IC layout, conversion banners, analyzing event, bare domain fix |
+| `src/lib/scraper.ts` | Email extraction, language filter, JSON-LD, nuclear fallback, improved div handling |
+| `src/lib/pipeline.ts` | Site analysis step, lead capture integration, analyzing event type |
+| `src/lib/rag.ts` | Adaptive thresholds, intelligent system prompt with SiteProfile |
+| `src/lib/lead-capture.ts` | **NEW** — Supabase lead insertion |
+| `src/lib/site-analyzer.ts` | **NEW** — LLM-powered site profiling |
+| `src/app/api/chat/route.ts` | Pass siteProfile + chunksCount to processRAGQuery |
+| `src/app/api/site/[id]/route.ts` | Return profile-aware siteName + suggestedQuestions |
+| `src/types/index.ts` | SiteProfile interface, SiteRecord.siteProfile field |
+| `CLAUDE.md` | Supabase env vars, font reference fix |
+| `package.json` | @supabase/supabase-js dependency |
+
+### Patterns discovered
+- Webflow sites nest text in 5+ div levels — standard extractors get < 3% of content
+- JSON-LD schema.org data (Hotel, Restaurant) contains structured facts (prices, hours, reviews) that dramatically improve RAG quality
+- Walking every #text node ("nuclear fallback") captures all visible text regardless of HTML structure
+- Single-page sites with anchor navigation (#about, #pricing) only produce 1 scraped page
+- Adaptive RAG thresholds are essential: small sites (< 30 chunks) need much lower thresholds (0.25 vs 0.45)
+- Site profiling via LLM generates keyFacts that serve as always-available knowledge, compensating for weak vector search on small corpora
+
+### Commits
+- `001e800` — feat: landing page redesign
+- `963b38d` — feat: lead capture
+- `0586249` — feat: intelligence layer
+- `24b811e` — fix: accept bare domains
+- `b15bb35` — feat: aggressive content extraction + JSON-LD + conversion banners
 
 ---
 
@@ -96,7 +160,13 @@ Project built rapidly, missing proper documentation.
 | 35A-Polish | Widget UX overhaul | ✅ |
 | 35B | Web onboarding (SSE terminal) | ✅ |
 | 35C | Vercel serverless fix | ✅ |
-| 35D | Live widget preview | ⬜ |
-| 35E | Project documentation | ✅ (this session) |
-| 36 | README + open source polish | ⬜ |
-| 37 | Abuse protection + testing | ⬜ |
+| 35D | Live widget preview + VSCode terminal | ✅ |
+| 35E | Project documentation | ✅ |
+| 35F | Error propagation + debug endpoint | ✅ |
+| 35G | Qdrant payload index + Stripe card | ✅ |
+| 35H | Landing page redesign (IC layout) | ✅ |
+| 35I | Lead capture (Supabase) | ✅ |
+| 35J | Intelligence layer (site profiling) | ✅ |
+| 35K | Scraper fix + JSON-LD + banners | ✅ |
+| 36 | Code review fixes + README | ⬜ |
+| 37 | Persistent rate limiting + testing | ⬜ |
