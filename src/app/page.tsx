@@ -148,6 +148,11 @@ export default function Home() {
         addLine(`${event.message}`, "#e5a820");
         break;
 
+      case "analyzing":
+        addLine("");
+        addLine("Analyse du site en cours...", "#a78bfa");
+        break;
+
       case "chunking":
         addLine("");
         addLine(

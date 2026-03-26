@@ -5,13 +5,15 @@ import { chunkSite } from "./chunker";
 import { indexSite } from "./indexer";
 import { upsertSite } from "./sites";
 import { captureLeadFromChatbot } from "./lead-capture";
-import type { SiteRecord } from "@/types";
+import { analyzeSite } from "./site-analyzer";
+import type { SiteRecord, SiteProfile, ScrapedPage } from "@/types";
 
 // --- Event types ---
 export type PipelineEvent =
   | { type: "start"; siteId: string; url: string }
   | { type: "page"; title: string; url: string; chars: number; current: number; maxPages: number }
   | { type: "limit"; pagesScraped: number; totalPagesFound: number; message: string }
+  | { type: "analyzing" }
   | { type: "chunking"; totalChunks: number; documents: number }
   | { type: "indexing"; indexed: number; total: number; percent: number }
   | { type: "complete"; siteId: string; pagesIndexed: number; chunksIndexed: number; elapsedMs: number }
@@ -121,6 +123,23 @@ export async function runPipeline(options: PipelineOptions): Promise<void> {
       return;
     }
 
+    // Step 1.5: Analyze site content (build intelligence profile)
+    onEvent({ type: "analyzing" });
+
+    let siteProfile: SiteProfile | null = null;
+    try {
+      const scrapedDir = path.join(dataDir, siteId, "scraped");
+      const files = fs.readdirSync(scrapedDir).filter((f) => f.endsWith(".json"));
+      const pages: ScrapedPage[] = files.map((f) =>
+        JSON.parse(fs.readFileSync(path.join(scrapedDir, f), "utf-8"))
+      );
+
+      siteProfile = await analyzeSite(pages, url);
+      console.log(`[Pipeline] Site profile: ${siteProfile.businessType} — ${siteProfile.businessName}`);
+    } catch (err) {
+      console.error("[Pipeline] Site analysis failed:", err);
+    }
+
     // Step 2: Chunk
     const chunkResult = chunkSite({ siteId, dataDir });
     onEvent({
@@ -147,14 +166,16 @@ export async function runPipeline(options: PipelineOptions): Promise<void> {
     const scrapedDir = path.join(dataDir, siteId, "scraped");
     const scrapedFiles = fs.readdirSync(scrapedDir).filter((f) => f.endsWith(".json"));
     const siteName = extractSiteName(url);
-    const suggestedQuestions = generateSuggestedQuestions(scrapedDir);
+    const suggestedQuestions = siteProfile?.suggestedQuestions || generateSuggestedQuestions(scrapedDir);
 
     const siteRecord: SiteRecord = {
       siteId,
       siteUrl: url,
       siteName,
       language: "fr",
-      welcomeMessage: `Bonjour ! Je suis l'assistant de ${siteName}. Comment puis-je vous aider ?`,
+      welcomeMessage: siteProfile
+        ? `Bonjour ! Je suis l'assistant de ${siteProfile.businessName}. ${siteProfile.summary.split(".")[0]}. Comment puis-je vous aider ?`
+        : `Bonjour ! Je suis l'assistant de ${siteName}. Comment puis-je vous aider ?`,
       fallbackMessage:
         "Je ne trouve pas cette information sur notre site. N'hésitez pas à nous contacter directement.",
       accentColor: "#3b82f6",
@@ -163,6 +184,7 @@ export async function runPipeline(options: PipelineOptions): Promise<void> {
       suggestedQuestions,
       createdAt: new Date().toISOString(),
       lastScrapedAt: new Date().toISOString(),
+      siteProfile,
     };
 
     try {

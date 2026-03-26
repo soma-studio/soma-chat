@@ -27,10 +27,10 @@ export async function GET(
 
   return NextResponse.json(
     {
-      siteName: site.siteName,
+      siteName: site.siteProfile?.businessName || site.siteName,
       welcomeMessage: site.welcomeMessage,
       accentColor: site.accentColor,
-      suggestedQuestions: site.suggestedQuestions || [],
+      suggestedQuestions: site.siteProfile?.suggestedQuestions || site.suggestedQuestions || [],
     },
     { headers: corsHeaders }
   );

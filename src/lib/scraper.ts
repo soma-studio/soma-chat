@@ -93,6 +93,30 @@ function pickBestEmail(emails: string[], siteUrl: string): string | null {
   return emails[0];
 }
 
+// --- Language variant filter ---
+const LANGUAGE_PATH_SEGMENTS = ["/en", "/fr", "/it", "/es", "/de", "/pt", "/nl", "/ru", "/ja", "/zh", "/ko", "/ar"];
+
+function isLanguageVariant(url: string, rootUrl: string): boolean {
+  try {
+    const rootPath = new URL(rootUrl).pathname;
+    const urlPath = new URL(url).pathname;
+
+    // If root itself is a language path, don't filter
+    for (const seg of LANGUAGE_PATH_SEGMENTS) {
+      if (rootPath.startsWith(seg + "/") || rootPath === seg) return false;
+    }
+
+    // Filter URLs starting with a language segment
+    for (const seg of LANGUAGE_PATH_SEGMENTS) {
+      if (urlPath.startsWith(seg + "/") || urlPath === seg) return true;
+    }
+
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 // --- Interfaces ---
 export interface ScrapeOptions {
   url: string;
@@ -213,8 +237,12 @@ function extractContent($: cheerio.CheerioAPI): string {
     const tagName = (el as any).tagName?.toLowerCase();
 
     if (tagName === "div") {
-      const hasBlockChildren = $el.children("h1, h2, h3, h4, h5, h6, p, ul, ol, table, article, section, div").length > 0;
-      if (hasBlockChildren) return;
+      // Skip divs that have semantic block children (we'll visit those)
+      const semanticChildCount = $el.children("h1, h2, h3, h4, h5, h6, p, ul, ol, table, article, section").length;
+      if (semanticChildCount > 0) return;
+      // Skip wrapper divs with no direct text
+      const directText = $el.contents().filter(function() { return this.type === "text"; }).text().trim();
+      if (directText.length < 5 && $el.children("div").length > 0) return;
     }
 
     const text = $el.text().replace(/\s+/g, " ").trim();
@@ -250,7 +278,35 @@ function extractContent($: cheerio.CheerioAPI): string {
     }
   });
 
-  return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  const result = lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+
+  // Fallback: if structured extraction yields < 200 chars, extract all leaf text
+  if (result.length < 200 && $content) {
+    const fallbackLines: string[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    $content.find("*").each((_i: number, el: any) => {
+      const $el = $(el);
+      const tag = el.tagName?.toLowerCase();
+      if (["script", "style", "noscript", "svg", "img", "br", "hr", "link", "meta"].includes(tag)) return;
+
+      const directText = $el.contents()
+        .filter(function() { return this.type === "text"; })
+        .text().replace(/\s+/g, " ").trim();
+
+      if (directText.length > 3) {
+        if (["h1", "h2", "h3", "h4"].includes(tag)) {
+          fallbackLines.push(`\n## ${directText}\n`);
+        } else {
+          fallbackLines.push(directText);
+        }
+      }
+    });
+
+    const fallback = fallbackLines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+    if (fallback.length > result.length * 1.5) return fallback;
+  }
+
+  return result;
 }
 
 function extractMetadata($: cheerio.CheerioAPI): { title: string; description: string } {
@@ -339,7 +395,7 @@ export async function scrapeWebsite(options: ScrapeOptions): Promise<ScrapeCompl
     if (item.depth < options.maxDepth) {
       const newLinks = extractLinks($, item.url, rootUrl);
       for (const link of newLinks) {
-        if (!visited.has(link)) {
+        if (!visited.has(link) && !isLanguageVariant(link, options.url)) {
           visited.add(link);
           queue.push({ url: link, depth: item.depth + 1 });
         }

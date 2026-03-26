@@ -26,6 +26,17 @@ export interface SiteConfig {
   fallbackMessage: string;
 }
 
+export interface SiteProfile {
+  businessType: string;
+  businessName: string;
+  location: string;
+  keyFacts: string[];
+  tone: string;
+  persona: string;
+  summary: string;
+  suggestedQuestions: string[];
+}
+
 export interface SiteRecord {
   siteId: string;
   siteUrl: string;
@@ -39,6 +50,7 @@ export interface SiteRecord {
   suggestedQuestions: string[];
   createdAt: string;
   lastScrapedAt: string;
+  siteProfile: SiteProfile | null;
 }
 
 export interface Source {

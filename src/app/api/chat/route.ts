@@ -89,7 +89,13 @@ export async function POST(request: NextRequest) {
     };
 
     // Process RAG query
-    const response = await processRAGQuery(siteId, message, siteConfig);
+    const response = await processRAGQuery(
+      siteId,
+      message,
+      siteConfig,
+      site.siteProfile || null,
+      site.chunksIndexed || 100
+    );
 
     return NextResponse.json(response, { headers: corsHeaders });
   } catch (err) {
