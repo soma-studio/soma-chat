@@ -175,7 +175,9 @@ function normalizeUrl(href: string, baseUrl: string): string | null {
 
 function isSameDomain(url: string, baseUrl: string): boolean {
   try {
-    return new URL(url).hostname === new URL(baseUrl).hostname;
+    const urlHost = new URL(url).hostname.replace(/^www\./, "");
+    const baseHost = new URL(baseUrl).hostname.replace(/^www\./, "");
+    return urlHost === baseHost;
   } catch {
     return false;
   }
@@ -445,6 +447,7 @@ async function fetchPage(url: string): Promise<string | null> {
         "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
       },
       redirect: "follow",
+      signal: AbortSignal.timeout(10000),
     });
     if (!res.ok) return null;
     const contentType = res.headers.get("content-type") || "";
@@ -476,8 +479,27 @@ export async function scrapeWebsite(options: ScrapeOptions): Promise<ScrapeCompl
     return { pagesScraped: 0, totalChars: 0, elapsedMs: Date.now() - startTime, contactEmail: null, allEmails: [] };
   }
 
-  queue.push({ url: rootUrl, depth: 0 });
-  visited.add(rootUrl);
+  // Probe the root URL — if bare domain fails, try www. prefix
+  let effectiveRootUrl = rootUrl;
+  const rootHtml = await fetchPage(rootUrl);
+  if (!rootHtml) {
+    try {
+      const parsed = new URL(rootUrl);
+      if (!parsed.hostname.startsWith("www.")) {
+        const wwwUrl = `${parsed.protocol}//www.${parsed.hostname}${parsed.pathname}${parsed.search}`;
+        const wwwHtml = await fetchPage(wwwUrl);
+        if (wwwHtml) {
+          effectiveRootUrl = wwwUrl;
+          console.log(`[Scraper] Bare domain failed, using www: ${wwwUrl}`);
+        }
+      }
+    } catch {
+      // Keep original URL
+    }
+  }
+
+  queue.push({ url: effectiveRootUrl, depth: 0 });
+  visited.add(effectiveRootUrl);
 
   while (queue.length > 0 && pagesScraped < options.maxPages) {
     const item = queue.shift()!;
