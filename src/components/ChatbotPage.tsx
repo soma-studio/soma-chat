@@ -226,7 +226,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
 
   return (
     <article className="py-[var(--spacing-section)] max-[991px]:py-[var(--spacing-section-mobile)]">
-      <div className="mx-auto max-w-[var(--container-max)] px-[var(--spacing-container)]">
+      <div className="mx-auto max-w-[var(--container-max)] px-5 min-[640px]:px-8 min-[992px]:px-[var(--spacing-container)]">
 
         {/* Hero */}
         <h1 className="text-h1 font-semibold max-[767px]:text-h2">
@@ -312,7 +312,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
             <p className="mb-3 text-sm font-medium text-[#f0f0f3]">
               Collez l&apos;URL de votre site web
             </p>
-            <form onSubmit={handleSubmit} className="flex w-full gap-3">
+            <form onSubmit={handleSubmit} className="flex w-full flex-col gap-3 min-[640px]:flex-row">
               <input
                 type="text"
                 aria-label="URL de votre site web"
@@ -320,12 +320,12 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 disabled={state === "running"}
-                className="flex-1 rounded-[var(--radius-default)] border border-[#2a2a34] bg-[#0a0a0f] px-4 py-2.5 text-md text-[#f0f0f3] placeholder-[#55556a] outline-none transition-colors focus:border-[#DDD3F5] disabled:opacity-50"
+                className="w-full min-[640px]:flex-1 rounded-[var(--radius-default)] border border-[#2a2a34] bg-[#0a0a0f] px-4 py-2.5 text-md text-[#f0f0f3] placeholder-[#55556a] outline-none transition-colors focus:border-[#DDD3F5] disabled:opacity-50"
               />
               <button
                 type="submit"
                 disabled={state === "running" || !url.trim()}
-                className="rounded-[var(--radius-default)] bg-white px-6 py-2.5 text-sm font-semibold text-dark transition-colors hover:bg-[#e0e0e0] disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full min-[640px]:w-auto rounded-[var(--radius-default)] bg-white px-6 py-2.5 text-sm font-semibold text-dark transition-colors hover:bg-[#e0e0e0] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {state === "running" ? "En cours..." : "Cr\u00e9er"}
               </button>
