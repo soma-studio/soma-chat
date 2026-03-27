@@ -384,7 +384,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
                   </div>
                   <div
                     className="overflow-hidden rounded-[4px] border border-[#1f1f28] bg-[#0a0a0f]"
-                    style={{ height: "480px" }}
+                    style={{ height: "600px" }}
                   >
                     <iframe
                       className="h-full w-full border-0"

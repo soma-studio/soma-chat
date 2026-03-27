@@ -174,7 +174,7 @@ export async function runPipeline(options: PipelineOptions): Promise<void> {
       siteName,
       language: "fr",
       welcomeMessage: siteProfile
-        ? `Bonjour ! Je suis l'assistant de ${siteProfile.businessName}. ${siteProfile.summary.split(".")[0]}. Comment puis-je vous aider ?`
+        ? `Bonjour ! Je suis l'assistant de ${siteProfile.businessName}. Comment puis-je vous aider ?`
         : `Bonjour ! Je suis l'assistant de ${siteName}. Comment puis-je vous aider ?`,
       fallbackMessage:
         "Je ne trouve pas cette information sur notre site. N'hésitez pas à nous contacter directement.",
