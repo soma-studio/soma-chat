@@ -264,12 +264,12 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
             <p className="mt-1 text-sm text-gray">
               10 pages max. scrappées
             </p>
-            <a
-              href="#sandbox"
+            <button
+              onClick={() => document.getElementById('sandbox')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
               className="mt-6 inline-block w-full rounded-[var(--radius-pill)] bg-dark px-5 py-2.5 text-sm font-normal text-white transition-all duration-300 hover:bg-button-hover"
             >
               Cr&eacute;er mon chatbot
-            </a>
+            </button>
           </div>
         </div>
 
