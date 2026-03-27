@@ -36,10 +36,9 @@ export async function captureLeadFromChatbot(data: LeadCaptureData): Promise<voi
     return;
   }
 
-  // Skip if no email found
+  // Log when no email found but continue with lead capture anyway
   if (!data.contactEmail) {
-    console.log("[Lead Capture] No contact email found — skipping lead capture");
-    return;
+    console.log("[Lead Capture] No contact email found — capturing lead without email");
   }
 
   try {
@@ -79,7 +78,7 @@ export async function captureLeadFromChatbot(data: LeadCaptureData): Promise<voi
       .insert({
         company_name: companyName,
         website: data.siteUrl,
-        contact_email: data.contactEmail,
+        contact_email: data.contactEmail || null,
         email_verified: false,
         industry_id: INDUSTRY_ID,
         score: 40,
