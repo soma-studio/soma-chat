@@ -229,7 +229,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
       <div className="mx-auto max-w-[var(--container-max)] px-5 min-[640px]:px-8 min-[992px]:px-[var(--spacing-container)]">
 
         {/* Hero */}
-        <h1 className="text-h2 font-semibold max-[767px]:text-h3">
+        <h1 className="text-h1 font-semibold max-[767px]:text-h2">
           Chatbot IA gratuit
         </h1>
         <p className="mt-4 max-w-[600px] text-body text-gray">
@@ -519,7 +519,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
 
         {/* Upsell: Free vs Custom comparison */}
         <div className="mt-20">
-          <h2 className="text-h3 font-medium text-title-text">
+          <h2 className="text-h3 font-medium">
             Aller plus loin
           </h2>
           <p className="mt-3 text-body text-gray">
@@ -623,7 +623,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
       {/* Bottom CTA */}
       <div className="mx-auto max-w-[var(--container-max)] px-5 min-[640px]:px-8 min-[992px]:px-[var(--spacing-container)]">
         <div className="mt-16 text-center">
-          <h2 className="text-h3 font-medium text-title-text">
+          <h2 className="text-h3 font-medium">
             Une question sur nos offres ?
           </h2>
           <p className="mt-3 text-body text-gray">

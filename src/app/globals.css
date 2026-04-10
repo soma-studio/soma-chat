@@ -56,3 +56,9 @@ body {
   color: #333333;
   font-family: var(--font-manrope), -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-manrope);
+  color: var(--color-title-text);
+  line-height: 1.2;
+}
