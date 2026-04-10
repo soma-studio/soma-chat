@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import VoiceWidget from "@/components/ui/VoiceWidget";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -56,6 +57,7 @@ export default function RootLayout({
         <Footer />
         <Analytics />
         <SpeedInsights />
+        <VoiceWidget />
       </body>
     </html>
   );
