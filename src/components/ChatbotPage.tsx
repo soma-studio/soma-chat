@@ -273,31 +273,6 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
           </div>
         </div>
 
-        {/* How it works */}
-        <div className="mt-20">
-          <h2 className="text-h3 font-medium">
-            Comment &ccedil;a fonctionne
-          </h2>
-          <div className="mt-10 grid grid-cols-1 gap-8 min-[992px]:grid-cols-2">
-            {howItWorks.map((step, i) => (
-              <div key={step.id || i} className="flex items-start gap-5">
-                <span
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-dark"
-                  style={{ backgroundColor: '#DDD3F5' }}
-                >
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <div>
-                  <h3 className="font-medium text-title-text">{step.stepTitle}</h3>
-                  <p className="mt-2 text-body leading-relaxed text-gray">
-                    {step.stepDescription}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Sandbox */}
         <div className="mt-20">
           <h2 className="text-h3 font-medium">
@@ -517,6 +492,31 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
           </div>
         </div>
 
+        {/* How it works */}
+        <div className="mt-20">
+          <h2 className="text-h3 font-medium">
+            Comment &ccedil;a fonctionne
+          </h2>
+          <div className="mt-10 grid grid-cols-1 gap-8 min-[992px]:grid-cols-2">
+            {howItWorks.map((step, i) => (
+              <div key={step.id || i} className="flex items-start gap-5">
+                <span
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-dark"
+                  style={{ backgroundColor: '#DDD3F5' }}
+                >
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <h3 className="font-medium text-title-text">{step.stepTitle}</h3>
+                  <p className="mt-2 text-body leading-relaxed text-gray">
+                    {step.stepDescription}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Upsell: Free vs Custom comparison */}
         <div className="mt-20">
           <h2 className="text-h3 font-medium text-title-text">
@@ -613,7 +613,15 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
           </div>
         </div>
 
-        {/* Bottom CTA */}
+      </div>
+
+      {/* FAQ — outside inner container (FAQ has its own container) */}
+      {faq.length > 0 && (
+        <FAQ items={faq.map(f => ({ question: f.question, answer: f.answer }))} />
+      )}
+
+      {/* Bottom CTA */}
+      <div className="mx-auto max-w-[var(--container-max)] px-5 min-[640px]:px-8 min-[992px]:px-[var(--spacing-container)]">
         <div className="mt-16 text-center">
           <h2 className="text-h3 font-medium text-title-text">
             Une question sur nos offres ?
@@ -630,13 +638,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
             R&eacute;server un cr&eacute;neau
           </a>
         </div>
-
       </div>
-
-      {/* FAQ — outside inner container (FAQ has its own container) */}
-      {faq.length > 0 && (
-        <FAQ items={faq.map(f => ({ question: f.question, answer: f.answer }))} />
-      )}
 
     </article>
   );
