@@ -250,25 +250,23 @@ export default function VoiceWidget() {
             exit={{ opacity: 0, x: 20, scale: 0.8 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             onClick={handleOpen}
-            className="fixed bottom-8 right-[5.5rem] z-50 cursor-pointer rounded-2xl border border-[rgba(232,168,124,0.2)] px-4 py-3 shadow-lg backdrop-blur-sm max-[767px]:right-[5rem] max-[767px]:max-w-[200px]"
-            style={{
-              background: 'linear-gradient(135deg, rgba(232,168,124,0.12) 0%, rgba(232,168,124,0.06) 100%)',
-            }}
+            className="fixed bottom-8 right-[5.5rem] z-50 cursor-pointer rounded-2xl border border-[#0e1527] px-4 py-3 shadow-lg max-[767px]:right-[5rem] max-[767px]:max-w-[220px]"
+            style={{ background: '#0e1527' }}
           >
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); setShowGreeting(false) }}
-              className="absolute right-1 top-1 cursor-pointer text-[#717171] transition-colors hover:text-[#333]"
+              className="absolute right-1 top-1 cursor-pointer text-[rgba(255,255,255,0.6)] transition-colors hover:text-white"
               aria-label="Fermer"
             >
               <X size={12} />
             </button>
-            <p className="text-sm font-medium text-[#e8a87c] whitespace-nowrap max-[767px]:whitespace-normal">
-              Besoin d&apos;aide ? Parlez-moi !
+            <p className="text-sm font-medium text-white whitespace-nowrap max-[767px]:whitespace-normal">
+              Bienvenue sur SOMA, je peux vous aider ?
             </p>
             <div
-              className="absolute right-[-6px] top-1/2 -translate-y-1/2 h-3 w-3 rotate-45 border-r border-t border-[rgba(232,168,124,0.2)]"
-              style={{ background: 'rgba(232,168,124,0.10)' }}
+              className="absolute right-[-6px] top-1/2 -translate-y-1/2 h-3 w-3 rotate-45 border-r border-t border-[#0e1527]"
+              style={{ background: '#0e1527' }}
             />
           </motion.div>
         )}
