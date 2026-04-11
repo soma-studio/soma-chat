@@ -265,4 +265,19 @@ Multi-step session spanning somastudio-site and soma-chat. Focused on making the
 | 35K | Scraper fix + JSON-LD + banners | ✅ |
 | 36 | Code review fixes (security + a11y + types) | ✅ |
 | 37D-37F | CMS content + UI polish + SEO/AEO | ✅ |
+| G | VoiceWidget + UI harmonization | ✅ |
+
+---
+
+## Session G — 2026-04-11 — VoiceWidget + UI Harmonization
+
+**Goal:** Add VoiceWidget floating assistant, harmonize UI with somastudio.xyz.
+
+### What was built
+- VoiceWidget.tsx: copied from somastudio-site, excluded paths: /admin
+- Added to root layout after SpeedInsights
+- globals.css: heading color rule added (h1-h6 color var(--color-title-text))
+- h1 class fixed: text-h2 to text-h1
+- Greeting bubble: dark blue bg (#0e1527), white text
+- Section order fixed: Hero, Features, Sandbox, How It Works, Upsell, FAQ, CTA
 | 38 | README + GitHub polish + diverse site testing | ⬜ |
