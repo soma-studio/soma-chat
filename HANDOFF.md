@@ -1,20 +1,20 @@
-# HANDOFF — Session G (April 11, 2026)
+# HANDOFF — Session H (April 11, 2026)
 
 ## Date: 2026-04-11
 
 ## Summary
 
-Session G added VoiceWidget floating assistant, harmonized UI with somastudio.xyz, updated greeting bubble styling.
+No direct changes to soma-chat in Session H. Last changes were Session G (VoiceWidget + UI harmonization). Documenting current state for continuity.
 
-## What changed
+## Current state
 
-- VoiceWidget.tsx added (copied from somastudio-site, excluded paths: /admin)
-- Added to root layout after SpeedInsights
-- globals.css: heading color rule added
-- h1 class fixed to text-h1
-- Greeting bubble: dark blue bg, white text, "Bienvenue sur SOMA, je peux vous aider ?"
-- Section order verified: Hero, Features, Sandbox, How It Works, Upsell, FAQ, CTA
+- VoiceWidget.tsx present in root layout (copied from somastudio-site, Session G)
+- Heading color rule in globals.css
+- h1 class: text-h1 font-semibold
+- Greeting bubble: dark blue bg, white text
+- CMS-driven content (ISR 1h from somastudio.xyz Payload API)
 
-## Commits
+## What is next
 
-All pushed to origin/main.
+- VoiceWidget may need updating if somastudio-site VoiceWidget changes propagate (scroll opacity, auto-connect logic are homepage-specific so may not apply here)
+- Mobile responsive testing
