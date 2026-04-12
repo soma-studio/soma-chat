@@ -8,8 +8,8 @@ const SITE_URL = 'https://somastudio.xyz'
 const NAV_LINKS = [
   { href: '/', label: 'Accueil' },
   { href: '/nos-services', label: 'Nos services' },
-  { href: '/projets', label: 'Projets' },
-  { href: '/blog', label: 'Blog' },
+  { href: '/tarifs', label: 'Tarifs' },
+  { href: '/ressources', label: 'Ressources' },
   { href: '/contact', label: 'Contact' },
 ]
 
