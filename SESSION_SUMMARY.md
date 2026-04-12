@@ -247,6 +247,23 @@ Multi-step session spanning somastudio-site and soma-chat. Focused on making the
 
 ---
 
+## Session I — 2026-04-12 — Footer Links Update + Blog Link
+
+### Context
+Cross-repo alignment with somastudio-site. Footer navigation updated to match current site structure.
+
+### Changes
+
+| File | Change |
+|------|--------|
+| `src/components/Footer.tsx` | NAV_LINKS: Projets→Tarifs, Blog→Ressources. Added Blog link to /ressources/articles. |
+
+### Status
+- **Build:** pass (tsc clean)
+- **Commit:** `d1c4127`
+
+---
+
 ## Progression
 
 | Session | Scope | Status |
@@ -280,4 +297,5 @@ Multi-step session spanning somastudio-site and soma-chat. Focused on making the
 - h1 class fixed: text-h2 to text-h1
 - Greeting bubble: dark blue bg (#0e1527), white text
 - Section order fixed: Hero, Features, Sandbox, How It Works, Upsell, FAQ, CTA
+| I | Footer links update + Blog link | ✅ |
 | 38 | README + GitHub polish + diverse site testing | ⬜ |

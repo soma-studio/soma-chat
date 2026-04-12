@@ -1,20 +1,23 @@
-# HANDOFF — Session H (April 11, 2026)
+# HANDOFF — Session I (April 12, 2026)
 
-## Date: 2026-04-11
+## Date: 2026-04-12
 
 ## Summary
 
-No direct changes to soma-chat in Session H. Last changes were Session G (VoiceWidget + UI harmonization). Documenting current state for continuity.
+Footer links updated to match somastudio-site navigation restructure. Blog link added.
+
+## What changed
+
+- Footer NAV_LINKS: Projets→Tarifs, Blog→Ressources
+- Blog link added pointing to somastudio.xyz/ressources/articles
 
 ## Current state
 
 - VoiceWidget.tsx present in root layout (copied from somastudio-site, Session G)
-- Heading color rule in globals.css
-- h1 class: text-h1 font-semibold
-- Greeting bubble: dark blue bg, white text
 - CMS-driven content (ISR 1h from somastudio.xyz Payload API)
+- Footer aligned with somastudio-site navigation
 
 ## What is next
 
-- VoiceWidget may need updating if somastudio-site VoiceWidget changes propagate (scroll opacity, auto-connect logic are homepage-specific so may not apply here)
 - Mobile responsive testing
+- README + GitHub polish + diverse site testing
