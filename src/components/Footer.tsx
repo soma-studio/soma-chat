@@ -3,8 +3,8 @@ const SITE_URL = 'https://somastudio.xyz'
 const NAV_LINKS = [
   { href: '/', label: 'Accueil' },
   { href: '/nos-services', label: 'Nos services' },
-  { href: '/projets', label: 'Projets' },
-  { href: '/blog', label: 'Blog' },
+  { href: '/tarifs', label: 'Tarifs' },
+  { href: '/ressources', label: 'Ressources' },
   { href: '/contact', label: 'Contact' },
 ]
 
@@ -60,6 +60,14 @@ export function Footer() {
                   </a>
                 </li>
               ))}
+              <li>
+                <a
+                  href={`${SITE_URL}/ressources/articles`}
+                  className="text-[13px] text-[#717171] transition-colors duration-300 hover:text-[#000]"
+                >
+                  Blog
+                </a>
+              </li>
             </ul>
           </div>
 
