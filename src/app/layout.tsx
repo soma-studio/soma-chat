@@ -24,8 +24,8 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   metadataBase: new URL('https://chatbot.somastudio.xyz'),
   title: {
-    default: 'Chatbot IA gratuit — SOMA Studio',
-    template: '%s — SOMA Studio',
+    default: 'Chatbot IA gratuit | SOMA Studio',
+    template: '%s | SOMA Studio',
   },
   description:
     'Chatbot IA gratuit par SOMA Studio. Testez un assistant intelligent directement sur votre navigateur.',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     locale: 'fr_FR',
     siteName: 'SOMA Studio',
     images: [
-      { url: '/og-default.png', width: 1200, height: 630, alt: 'SOMA Chat — Chatbot IA gratuit pour votre site web' },
+      { url: '/og-default.png', width: 1200, height: 630, alt: 'SOMA Chat | Chatbot IA gratuit pour votre site web' },
     ],
   },
   twitter: {

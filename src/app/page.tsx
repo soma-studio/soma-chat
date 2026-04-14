@@ -3,7 +3,7 @@ import { fetchServiceData } from '@/lib/cms-data'
 import { ChatbotPage } from '@/components/ChatbotPage'
 
 export const metadata: Metadata = {
-  title: 'Chatbot IA gratuit pour votre site web — SOMA Studio',
+  title: 'Chatbot IA gratuit pour votre site web | SOMA Studio',
   description:
     'Ajoutez un chatbot IA à votre site en 5 minutes. Scraping automatique, indexation vectorielle Mistral AI, widget embeddable en une ligne de code. Gratuit, open source (MIT).',
   keywords: [
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Chatbot IA gratuit — SOMA Studio',
+    title: 'Chatbot IA gratuit | SOMA Studio',
     description:
       'Ajoutez un chatbot IA à votre site en 5 minutes. Gratuit, open source.',
   },
@@ -66,7 +66,7 @@ export default async function Home() {
       '@type': 'Offer',
       price: '0',
       priceCurrency: 'EUR',
-      description: 'Gratuit — 10 pages indexées',
+      description: 'Gratuit · 10 pages indexées',
     },
     author: {
       '@type': 'Organization',

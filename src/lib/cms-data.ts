@@ -30,8 +30,8 @@ export const FALLBACK_FEATURES: CMSFeature[] = [
   { feature: 'Chatbot RAG avec réponses sourcées' },
   { feature: 'Widget embeddable en une ligne de code (Shadow DOM)' },
   { feature: 'Questions suggérées auto-générées' },
-  { feature: 'Aucune clé API requise — tout est hébergé' },
-  { feature: 'Open source (MIT) — self-host possible' },
+  { feature: 'Aucune clé API requise. Tout est hébergé' },
+  { feature: 'Open source (MIT). Self-host possible' },
 ]
 
 export const FALLBACK_STEPS: CMSStep[] = [
@@ -66,7 +66,7 @@ export const FALLBACK_FAQ: CMSFaqItem[] = [
   {
     question: 'Mes données sont-elles en sécurité ?',
     answer:
-      "Le chatbot n'indexe que le contenu public de votre site — les mêmes pages que Google peut voir. Aucune donnée privée, aucun formulaire, aucune zone authentifiée n'est scrappée. Les embeddings vectoriels sont stockés sur Qdrant Cloud (AWS eu-west-1). Le code est open source (MIT) — vous pouvez auditer chaque ligne.",
+      "Le chatbot n'indexe que le contenu public de votre site — les mêmes pages que Google peut voir. Aucune donnée privée, aucun formulaire, aucune zone authentifiée n'est scrappée. Les embeddings vectoriels sont stockés sur Qdrant Cloud (AWS eu-west-1). Le code est open source (MIT), vous pouvez auditer chaque ligne.",
   },
   {
     question: 'Que se passe-t-il après 10 pages ?',
@@ -76,7 +76,7 @@ export const FALLBACK_FAQ: CMSFaqItem[] = [
   {
     question: "Puis-je personnaliser l'apparence du chatbot ?",
     answer:
-      "Vous pouvez changer la couleur d'accent via l'attribut data-color sur le script. Le widget utilise le Shadow DOM pour l'isolation CSS — il ne sera jamais affecté par le style de votre site, et ne modifiera jamais le vôtre.",
+      "Vous pouvez changer la couleur d'accent via l'attribut data-color sur le script. Le widget utilise le Shadow DOM pour l'isolation CSS. Il ne sera jamais affecté par le style de votre site, et ne modifiera jamais le vôtre.",
   },
 ]
 

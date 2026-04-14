@@ -306,7 +306,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
               </button>
             </form>
             <p className="mt-2 text-[11px] text-[#8b8b9e]">
-              10 pages max. scrapp&eacute;es — Aucune carte requise.
+              10 pages max. scrapp&eacute;es. Aucune carte requise.
             </p>
           </div>
 
@@ -577,7 +577,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
               <ul className="mt-6 space-y-3">
                 <li className="flex items-start gap-3 text-md text-body-text">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-dark" />
-                  Pages illimit&eacute;es — tout votre site index&eacute;
+                  Pages illimit&eacute;es, tout votre site index&eacute;
                 </li>
                 <li className="flex items-start gap-3 text-md text-body-text">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-dark" />
@@ -585,7 +585,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
                 </li>
                 <li className="flex items-start gap-3 text-md text-body-text">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-dark" />
-                  Support multilingue — r&eacute;ponses dans la langue du visiteur
+                  Support multilingue, r&eacute;ponses dans la langue du visiteur
                 </li>
                 <li className="flex items-start gap-3 text-md text-body-text">
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-dark" />
@@ -627,7 +627,7 @@ export function ChatbotPage({ features, howItWorks, faq }: ChatbotPageProps) {
             Une question sur nos offres ?
           </h2>
           <p className="mt-3 text-body text-gray">
-            Premier &eacute;change sans engagement — on vous explique ce qui est possible pour votre cas.
+            Premier &eacute;change sans engagement. On vous explique ce qui est possible pour votre cas.
           </p>
           <a
             href="https://calendly.com/hello-somastudio/30min"
