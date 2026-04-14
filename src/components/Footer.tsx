@@ -17,6 +17,7 @@ const LEGAL_LINKS = [
 const SOCIAL_LINKS = [
   { label: 'LinkedIn', href: 'https://www.linkedin.com/company/soma-studio-it' },
   { label: 'Medium', href: 'https://medium.com/@hello_48962' },
+  { label: 'GitHub', href: 'https://github.com/soma-studio' },
 ]
 
 const CALENDLY_URL = 'https://calendly.com/hello-somastudio/30min'
