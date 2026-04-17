@@ -297,5 +297,45 @@ Cross-repo alignment with somastudio-site. Footer navigation updated to match cu
 - h1 class fixed: text-h2 to text-h1
 - Greeting bubble: dark blue bg (#0e1527), white text
 - Section order fixed: Hero, Features, Sandbox, How It Works, Upsell, FAQ, CTA
+
+### Commit hashes
+- `5fc3553` — feat: add VoiceWidget floating assistant to chatbot.somastudio.xyz
+- `468c8e7` — fix: taller preview iframe (480→600px) + shorter welcome message
+- `36f050a` — fix: capture leads even without contact email
+- `befad9f` — fix: reorder sections and align layout with somastudio.xyz design system
+- `b07b966` — fix: harmonize typography, spacing, section order
+- `483e8ff` — fix: h1 class text-h2→text-h1, heading color rule #000 to globals.css
+- `d44a462` — fix: greeting bubble dark blue bg + white text, updated message
+- `9ff6405` — docs: end of Session G
+
+---
+
+## Session H — 2026-04-11 — HANDOFF continuity doc
+
+Doc-only session; `c4ab5f2` refreshed HANDOFF.md to bridge Session G → next session. No code changes tied to this session beyond `1d8e35b` (navbar `Projets → Tarifs`, `Blog → Ressources` cross-repo alignment, committed same day).
+
+### Commit hashes
+- `c4ab5f2` — docs: update HANDOFF for Session H continuity
+- `1d8e35b` — fix: update navbar links — Projets→Tarifs, Blog→Ressources
+
+---
+
+## Session K — 2026-04-14 — GitHub footer link + em dash cleanup
+
+Cross-repo harmonization with somastudio-site learned pattern #183. Footer `SOCIAL_LINKS` gains a GitHub entry (`src/components/Footer.tsx`). Em dashes removed from user-facing UI in `ChatbotPage.tsx` (4), `cms-data.ts` (5), metadata title separators `—` → `|` in `layout.tsx` + `page.tsx`. Library-code em dashes intentionally preserved.
+
+### Commit hashes
+- `958430a` — fix: add GitHub link to footer SOCIAL_LINKS (cross-repo harmonization)
+- `1582f5d` — fix: remove em dashes from user-facing content
+- `3d05556` — docs: session K handoff
+
+---
+
+## Progression (ongoing)
+
+| Session | Scope | Status |
+|---------|-------|--------|
 | I | Footer links update + Blog link | ✅ |
+| H | HANDOFF continuity doc + navbar links | ✅ |
+| K | GitHub footer + em dash cleanup | ✅ |
 | 38 | README + GitHub polish + diverse site testing | ⬜ |

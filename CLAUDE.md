@@ -115,6 +115,10 @@ Embedded mode (for preview iframe):
 - Set `window.SOMA_CHAT_AUTO_OPEN = true` before loading the widget
 - Widget fills container, hides floating button, auto-opens panel
 
+## VoiceWidget
+
+Floating voice assistant shipped on the landing page in Session G (commit `5fc3553`). Component: `src/components/ui/VoiceWidget.tsx` (copied from somastudio-site). Embedded via iframe from `voice.somastudio.xyz` with `autoConnect` URL param. Mounted in `src/app/layout.tsx` after `SpeedInsights`; excluded from `/admin` path. Uses `NEXT_PUBLIC_SITE_URL` for cross-origin requests (must be `https://chatbot.somastudio.xyz` in production).
+
 ## Vercel Deployment
 
 - Filesystem is read-only except `/tmp`
@@ -134,6 +138,22 @@ NEXT_PUBLIC_SITE_URL=      # Widget script origin (https://chatbot.somastudio.xy
 SUPABASE_URL=              # Supabase project URL (same as somastudio-site)
 SUPABASE_SERVICE_ROLE_KEY= # Supabase service role key (server only)
 ```
+
+## SEO / Analytics
+
+The production build ships a full SEO + AEO stack. Descriptive map of what exists and where.
+
+### Google Analytics 4
+GA4 measurement ID `G-F8R3JD2DCT` is injected via `src/components/GoogleAnalytics.tsx` (client component, `next/script` with `afterInteractive`). Mounted in `src/app/layout.tsx`; route-change page views fire from `usePathname`.
+
+### JSON-LD (Schema.org)
+Four structured data blocks in `src/app/page.tsx` (landing page is the only rich-result target): `SoftwareApplication`, `BreadcrumbList`, `HowTo` (5-step install flow), `FAQPage` (bound to the same items rendered by `FAQ.tsx`). Each emits a `<script type="application/ld+json">` via `dangerouslySetInnerHTML`.
+
+### robots / sitemap / llms.txt
+`src/app/robots.ts` allows `/`, disallows `/api/`, links the sitemap. `src/app/sitemap.ts` emits a single entry for the root (weekly, priority 1.0). `public/llms.txt` gives AI crawlers a concise product description.
+
+### OpenGraph + Twitter Cards
+Metadata lives in `src/app/layout.tsx` as the Next.js `metadata` export. `metadataBase` reads from `NEXT_PUBLIC_SITE_URL`; title template is `%s | SOMA Studio`. OG + Twitter fields cover type, siteName, image `/og-image.png`, alt text. The landing route overrides page-level `metadata` in `page.tsx`.
 
 ## DO NOT
 

@@ -77,3 +77,16 @@ Fields: siteId, siteUrl, siteName, language, welcomeMessage, fallbackMessage, ac
 - Input disabled during loading
 - "Powered by SOMA Studio" footer
 - Embedded mode (SOMA_CHAT_AUTO_OPEN) for preview
+
+---
+
+## 8. Post-Bootstrap Additions
+
+Sections 1-7 are the original bootstrap spec. Features shipped afterward (Sessions 35H-K, 37D-F, G, I, K) are documented in CLAUDE.md and SESSION_SUMMARY.md. Key additions:
+
+- **CMS-driven content** (Session 37D): `src/lib/cms-data.ts` fetches FAQ + features from Payload REST on somastudio.xyz with 1h ISR; fallbacks when the CMS is unreachable. Consumed by `ChatbotPage.tsx` + `FAQ.tsx`.
+- **Lead capture** (Session 35I): emails extracted during scrape land in Supabase `leads` table with `source: "soma-chat"`.
+- **Intelligence layer** (Session 35J): LLM-generated site profile (`businessType`, `tone`, `persona`) drives adaptive RAG thresholds and welcome messages.
+- **SEO / AEO** (Session 37F): GA4 + 4 JSON-LD schemas + robots / sitemap / llms.txt + OpenGraph + Twitter cards. Descriptive map in CLAUDE.md "SEO / Analytics".
+- **VoiceWidget** (Session G): floating voice assistant embedded from `voice.somastudio.xyz` on the landing page. Described in CLAUDE.md "VoiceWidget".
+- **Navbar + Footer alignment** (Sessions I, K): navigation links harmonized with somastudio.xyz (`Projets → Tarifs`, `Blog → Ressources`), GitHub footer link added.
